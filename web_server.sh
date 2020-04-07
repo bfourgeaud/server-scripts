@@ -176,7 +176,7 @@ install_Wordpress(){
 	echo "---> Setting up configuration :"
 	read -p "Enter a database name :" _DB_NAME
 	read -p "Enter a username :" _USERNAME
-	read -ps "Enter a password :" _PASSWORD
+	read -s -p "Enter a password :" _PASSWORD
 	
 	echo "---> Configuring Database"
 	mysql -u root -p -e "CREATE USER '$_USERNAME'@'localhost' IDENTIFIED BY '$_PASSWORD'; CREATE DATABASE $_DB_NAME; GRANT ALL PRIVILEGES ON $_DB_NAME.* TO '$_USERNAME'@'localhost'; FLUSH PRIVILEGES;"
