@@ -190,6 +190,7 @@ then
 	echo "---> Port : $PORT"
 	echo "---> SSL : $SSL"
 	echo "---> GITHUB : $GITHUB"
+	echo "---> ENVIRONNEMENT : $ENV"
 	
 	add_server_block $DOMAIN $PORT
 		
