@@ -15,13 +15,9 @@ setup_firewall(){
 	
 	if _HTTP_AUTH; 
 	then 
-		ufw delete 'Nginx HTTP';
-		ufw delete 'Nginx HTTPS'; 
 		ufw allow 'Nginx Full';
 	else
-		ufw delete 'Nginx HTTP';
-		ufw delete 'Nginx Full';
-		ufw allow 'Nginx HTTPS'; 
+		ufw allow 'Nginx HTTPS';
 	fi
 	
 	ufw enable
@@ -148,9 +144,6 @@ setup_ssl(){
 	
 	echo "---> Install Certbot"
 	apt install python-certbot-nginx -t stretch-backports
-	
-	echo "---> Authorize HTTPS traffic in Firewall"
-	ufw allow 'Nginx Full'
 	
 	echo "---> Obtaining Certificate"
 	certbot --nginx -d $_DOMAIN -d www.$_DOMAIN

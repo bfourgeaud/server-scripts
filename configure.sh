@@ -14,7 +14,6 @@ if ! [ $(id -u) = 0 ]; then
    exit 1
 fi
 
-echo
 # Authorize HTTP connection (Unsecure) ?
 while true; do
 	read -p "Authorize HTTP connection (y or n) ?" yn
@@ -25,6 +24,7 @@ while true; do
 esac
 done
 
+echo
 #Choose WebServer
 PS3='What WebServer do you want to install ? : '
 options=("Apache" "Nginx" "None")
