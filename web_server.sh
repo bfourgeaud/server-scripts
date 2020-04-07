@@ -192,7 +192,7 @@ install_Wordpress(){
 	wget -P $_TEMP_PATH/ https://wordpress.org/latest.tar.gz
 	
 	echo "---> Uncompressing wordpress archive"
-	tar xzf $_TEMP_PATH/latest.tar.gz
+	tar xzf $_TEMP_PATH/latest.tar.gz -C $_TEMP_PATH/
 	rm $_TEMP_PATH/latest.tar.gz
 	
 	echo "---> Deleting target folder content"
