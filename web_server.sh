@@ -13,7 +13,7 @@ setup_firewall(){
 	echo "---> Configuring Firewall"
 	ufw allow OpenSSH
 	
-	if _HTTP_AUTH; 
+	if $_HTTP_AUTH; 
 	then 
 		ufw allow 'Nginx Full';
 	else
