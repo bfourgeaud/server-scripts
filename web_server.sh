@@ -40,21 +40,21 @@ add_server_block(){
 	chown -R $CURRENT_USER:$CURRENT_USER $FILE_PATH
 	chmod -R 755 $FILE_PATH
 	
-	echo "--> Adding server block"
-	cat <<END >$SITES_AVAILABLE$DOMAIN
-server {
-        listen 80;
-        listen [::]:80;
+	echo "---> Adding server block"
+	cat << "EOF" > $SITES_AVAILABLE$DOMAIN
+	server {
+			listen 80;
+			listen [::]:80;
 
-        root $FILE_PATH;
+			root $FILE_PATH;
 
-        server_name $DOMAIN www.$DOMAIN;
+			server_name $DOMAIN www.$DOMAIN;
 
-        location / {
-                try_files $uri $uri/ =404;
-        }
-}
-END
+			location / {
+					try_files $uri $uri/ =404;
+			}
+	}
+EOF
 	nano $SITES_AVAILABLE$DOMAIN
 	
 	echo "---> Enabling Server Block"
