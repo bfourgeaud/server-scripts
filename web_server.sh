@@ -80,7 +80,9 @@ install_NodeJS(){
 
 launch_NodeJS(){
 	local _PROJECT_PATH=$1
-	cd _PROJECT_PATH
+	
+	echo "---> Navigating to $_PROJECT_PATH"
+	cd $_PROJECT_PATH
 	
 	echo "---> Installing Dependecies"
 	npm install -g nodemon
