@@ -149,25 +149,19 @@ do
 	echo
 	
 	./web_server.sh --add "$webSrv" "$domain" "$portNr" "ssl=$configureSSL" "github=$connectGitHub"
-	
-	#Configuring SSL
-	if $configureSSL;
-	then 
-		./ssl.sh "$domain" "www.$domain"
-	fi
-	
+		
 	#Installing NodeJS
-	if [[ "$siteEnv" == "NodeJS" ]]; 
-	then 
-		./nodeJS.sh
+	#if [[ "$siteEnv" == "NodeJS" ]]; 
+	#then 
+	#	./nodeJS.sh
 		#Add proxy to apache/nginx to listen to port
-	fi
+	#fi
 	
 	#Installing Wordpress
-	if [[ "$siteEnv" == "Wordpress" ]]; 
-	then 
-		./wordpress.sh
-	fi
+	#if [[ "$siteEnv" == "Wordpress" ]]; 
+	#then 
+	#	./wordpress.sh
+	#fi
 	
 	#Wait for user confirmation
 	echo

@@ -70,7 +70,7 @@ clone_github(){
 	local _GITHUB_LINK=""
 	
 	read -p "Enter GitHub clone link :" _GITHUB_LINK
-	git clone _GITHUB_LINK _FILE_PATH/.
+	git clone $_GITHUB_LINK _FILE_PATH/.
 }
 
 setup_ssl(){
@@ -79,8 +79,8 @@ setup_ssl(){
 	echo "---> Setting up SSL"
 	
 	echo "---> Add up-to-date mirrors"
-	echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" > "/etc/apt/sources.list"
-	echo "deb-src http://deb.debian.org/debian stretch-backports main contrib non-free" > "/etc/apt/sources.list"
+	echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" >> "/etc/apt/sources.list"
+	echo "deb-src http://deb.debian.org/debian stretch-backports main contrib non-free" >> "/etc/apt/sources.list"
 	
 	echo "---> update mirrors"
 	apt update
