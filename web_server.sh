@@ -28,6 +28,7 @@ install_nginx(){
 
 add_server_block(){
 	DOMAIN=$1
+	CURRENT_USER=$(who | awk 'NR==1{print $1}')
 	FILE_PATH=/var/www/$DOMAIN
 	SITES_AVAILABLE=/etc/nginx/sites-available/
 	SITES_ENABLED=/etc/nginx/sites-enabled/
@@ -36,7 +37,7 @@ add_server_block(){
 	mkdir -p $FILE_PATH
 	
 	echo "---> Setting folder security"
-	chown $FILE_PATH
+	chown -R $CURRENT_USER:$CURRENT_USER $FILE_PATH
 	chmod -R 755 $FILE_PATH
 	
 	echo "--> Adding server block"
