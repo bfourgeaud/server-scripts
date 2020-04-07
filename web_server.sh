@@ -108,6 +108,7 @@ clone_github(){
 	
 	echo "---> Cloning to $_FILE_PATH"
 	cd $_FILE_PATH
+	ls
 	git clone $_GITHUB_LINK .
 }
 
