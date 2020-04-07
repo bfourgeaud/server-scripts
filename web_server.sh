@@ -179,7 +179,7 @@ install_Wordpress(){
 	read -s -p "Enter a password :" _PASSWORD
 	
 	echo "---> Configuring Database"
-	mysql -u root -p -e "CREATE USER '$_USERNAME'@'localhost' IDENTIFIED BY '$_PASSWORD'; CREATE DATABASE $_DB_NAME; GRANT ALL PRIVILEGES ON $_DB_NAME.* TO '$_USERNAME'@'localhost'; FLUSH PRIVILEGES;"
+	mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS '$_DB_NAME'; CREATE USER '$_USERNAME'@'localhost' IDENTIFIED BY '$_PASSWORD'; GRANT ALL PRIVILEGES ON $_DB_NAME.* TO '$_USERNAME'@'localhost'; FLUSH PRIVILEGES;"
 	
 	echo "---> Installing PHP"
 	apt install php7.0 php7.0-mysql
