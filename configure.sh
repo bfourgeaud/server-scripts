@@ -37,8 +37,6 @@ do
 		"Nginx")
 			./web_server.sh --install "Nginx" $authorizeHTTP;
 			break;;
-		"None")
-			break;;
 		*)
 			echo "invalid option";;
 	esac
@@ -77,8 +75,6 @@ do
 				"NodeJS")
 					break;;
 				"Wordpress")
-					break;;
-				"None")
 					break;;
 				*)
 					echo "invalid option";;
