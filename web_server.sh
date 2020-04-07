@@ -71,6 +71,8 @@ END
 
 INSTALL=false
 ADD=false
+SSL=false
+GITHUB=false
 
 # Loop through arguments and process them
 while [ -n "$1" ]; do # while loop starts
@@ -85,7 +87,9 @@ while [ -n "$1" ]; do # while loop starts
 			WEB_SERVER=$2
 			DOMAIN=$3
 			PORT=$4
-			shift 3
+			SSL=${5#*=}
+			GITHUB=${6#*=}
+			shift 5
 			;;
         *)
 			echo "Option $1 not recognized" ;;
@@ -115,6 +119,8 @@ then
 	echo "---> WebServer : $WEB_SERVER"
 	echo "---> Domain : $DOMAIN"
 	echo "---> Port : $PORT"
+	echo "---> SSL : $SSL"
+	echo "---> GITHUB : $GITHUB"
 	
 	add_server_block $DOMAIN $PORT
 fi

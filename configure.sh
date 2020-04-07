@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 
-function pause(){
+pause(){
    read -p "$*"
 }
 
@@ -148,7 +148,7 @@ do
 	echo "Installing site $domain ...."
 	echo
 	
-	./web_server.sh --add "$webSrv" "$domain" "$portNr"
+	./web_server.sh --add "$webSrv" "$domain" "$portNr" "ssl=$configureSSL" "github=$connectGitHub"
 	
 	#Configuring SSL
 	if $configureSSL;
