@@ -65,12 +65,37 @@ END
 	systemctl restart nginx
 }
 
+install_NodeJS(){
+	local _Node_Version="12.x"
+	
+	echo "---> Installing NodeJS"
+	
+	apt-get install curl software-properties-common
+	curl -sL https://deb.nodesource.com/setup_$_Node_Version | sudo bash -
+	apt-get install nodejs
+	
+	echo "---> Installed Node Version :" | node -v 
+	echo "---> Installed NPM version :" | npm -v
+}
+
+launch_NodeJS(){
+	local _PROJECT_PATH=$1
+	cd _PROJECT_PATH
+	
+	echo "---> Installing Dependecies"
+	npm install -g nodemon
+	npm install
+	
+	echo "---> Starting NodeJS app"
+	nodemon
+}
+
 clone_github(){
 	local _FILE_PATH=$1
 	local _GITHUB_LINK=""
 	
 	read -p "Enter GitHub clone link :" _GITHUB_LINK
-	git clone $_GITHUB_LINK _FILE_PATH/.
+	git clone $_GITHUB_LINK _FILE_PATH
 }
 
 setup_ssl(){
@@ -93,6 +118,9 @@ setup_ssl(){
 	
 	echo "---> Obtaining Certificate"
 	certbot --nginx -d $_DOMAIN -d www.$_DOMAIN
+	
+	echo "---> Restarting Nginx"
+	systemctl restart nginx
 	
 	echo "---> Test auto-renawal"
 	certbot renew --dry-run
@@ -129,7 +157,8 @@ while [ -n "$1" ]; do # while loop starts
 			PORT=$4
 			SSL=${5#*=}
 			GITHUB=${6#*=}
-			shift 5
+			ENV=$7
+			shift 6
 			;;
         *)
 			echo "Option $1 not recognized" ;;
@@ -163,10 +192,16 @@ then
 	echo "---> GITHUB : $GITHUB"
 	
 	add_server_block $DOMAIN $PORT
-	
+		
 	if $GITHUB;
 	then
 		clone_github $FILE_PATH
+	fi
+	
+	if [[ "$siteEnv" == "NodeJS" ]];
+	then 
+		install_NodeJS;
+		launch_NodeJS $FILE_PATH;
 	fi
 	
 	if $SSL;

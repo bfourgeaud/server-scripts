@@ -148,7 +148,7 @@ do
 	echo "Installing site $domain ...."
 	echo
 	
-	./web_server.sh --add "$webSrv" "$domain" "$portNr" "ssl=$configureSSL" "github=$connectGitHub"
+	./web_server.sh --add $webSrv $domain $portNr "ssl=$configureSSL" "github=$connectGitHub" $siteEnv
 		
 	#Installing NodeJS
 	#if [[ "$siteEnv" == "NodeJS" ]]; 
