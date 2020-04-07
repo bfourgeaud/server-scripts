@@ -1,0 +1,12 @@
+server {
+	listen 80;
+    listen [::]:80;
+
+    root <<PATH>>;
+
+    server_name <<DOMAIN>> www.<<DOMAIN>>;
+
+    location / {
+		try_files $uri $uri/ =404;
+    }
+}

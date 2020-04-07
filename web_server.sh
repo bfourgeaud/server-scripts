@@ -42,18 +42,18 @@ add_server_block(){
 	
 	echo "---> Adding server block"
 	cat << "EOF" > $SITES_AVAILABLE$DOMAIN
-	server {
-			listen 80;
-			listen [::]:80;
+server {
+        listen 80;
+        listen [::]:80;
 
-			root $FILE_PATH;
+        root $FILE_PATH;
 
-			server_name $DOMAIN www.$DOMAIN;
+        server_name $DOMAIN www.$DOMAIN;
 
-			location / {
-					try_files $uri $uri/ =404;
-			}
-	}
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
 EOF
 	nano $SITES_AVAILABLE$DOMAIN
 	
