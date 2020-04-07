@@ -1,5 +1,9 @@
 #!/bin/bash
 
+pause(){
+   read -p "$*"
+}
+
 install_apache(){
 	echo "---> Start installing Apache"
 	echo "---> Not implemented yet ..."
@@ -103,7 +107,8 @@ clone_github(){
 	rm -rf $_FILE_PATH/*
 	
 	echo "---> Cloning to $_FILE_PATH"
-	git clone $_GITHUB_LINK $_FILE_PATH
+	cd $_FILE_PATH
+	git clone $_GITHUB_LINK .
 }
 
 setup_ssl(){
@@ -201,21 +206,27 @@ then
 	echo "---> ENVIRONNEMENT : $ENV"
 	
 	add_server_block $DOMAIN $PORT
-		
+	pause "Press [Enter] key to continue"
+	
 	if $GITHUB;
 	then
 		clone_github $FILE_PATH
+		pause "Press [Enter] key to continue"
 	fi
 	
 	if [[ "$ENV" == "NodeJS" ]];
 	then 
 		install_NodeJS;
+		pause "Press [Enter] key to continue"
+		
 		launch_NodeJS $FILE_PATH;
+		pause "Press [Enter] key to continue"
 	fi
 	
 	if $SSL;
 	then
 		setup_ssl $DOMAIN
+		pause "Press [Enter] key to continue"
 	fi
 fi
 
