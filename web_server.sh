@@ -199,7 +199,8 @@ install_Wordpress(){
 	rm -rf $_FILE_PATH/{,.[!.],..?}*
 	
 	echo "---> Copying wordpress sources to target folder"
-	cp -r $_TEMP_PATH/wordpress $_FILE_PATH
+	cp -r $_TEMP_PATH/wordpress/. $_FILE_PATH/
+	rm -Rf $_TEMP_PATH/wordpress/
 }
 
 clone_github(){
