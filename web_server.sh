@@ -209,7 +209,7 @@ install_Wordpress(){
 	WPSalts=$(wget https://api.wordpress.org/secret-key/1.1/salt/ -q -O -)
 	TablePrefx=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 9 | head -n 1)_
 	
-	cat <<EOF > wordpress/wp-config.php
+	cat <<EOF > $_FILE_PATH/wp-config.php
 <?php
 /***Managed by JEEBIE.ME - Benjamin Fourgeaud***/
 
