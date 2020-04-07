@@ -89,11 +89,12 @@ launch_NodeJS(){
 	cd $_PROJECT_PATH
 	
 	echo "---> Installing Dependecies"
-	npm install -g nodemon
+	#npm install -g nodemon
+	npm install -g forever
 	npm install
 	
 	echo "---> Starting NodeJS app"
-	nodemon
+	forever start app.js
 }
 
 clone_github(){
