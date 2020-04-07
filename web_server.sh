@@ -164,7 +164,7 @@ launch_NodeJS(){
 
 install_Wordpress(){
 	local _FILE_PATH=$1
-	local _TEMP_PATH="/tmp/"
+	local _TEMP_PATH="/tmp"
 
 	echo "---> Installing MariaDB"
 	apt install mariadb-client mariadb-server
@@ -189,7 +189,7 @@ install_Wordpress(){
 	apt install phpmyadmin
 	
 	echo "---> Downloading latest Wordpress Version"
-	wget -P $_TEMP_PATH https://wordpress.org/latest.tar.gz
+	wget -P $_TEMP_PATH/ https://wordpress.org/latest.tar.gz
 	tar xpf $_TEMP_PATH/latest.tar.gz
 	
 	echo "---> Deleting target folder content"
@@ -283,7 +283,6 @@ while [ -n "$1" ]; do # while loop starts
 			INSTALL=true
 			WEB_SERVER=$2
 			HTTP_AUTH=$8
-			#shift 2
 			break;;
         -a|--add)
 			ADD=true
