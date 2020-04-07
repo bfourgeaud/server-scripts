@@ -9,15 +9,21 @@ pause(){
 ##First check current Linux Version
 #lsb_release --description
 
-#if ! [ $(id -u) = 0 ]; then
-#   echo "The script need to be run as root." >&2
-#   exit 1
-#fi
+if ! [ $(id -u) = 0 ]; then
+   echo "The script need to be run as root." >&2
+   exit 1
+fi
 
-
-##CONFIGURE SERVER BASIC SETTINGS
-#Update and Upgrade packages
-apt update
+echo
+# Authorize HTTP connection (Unsecure) ?
+while true; do
+	read -p "Authorize HTTP connection (y or n) ?" yn
+	case $yn in
+		[Yy]* ) authorizeHTTP=true; break;;
+		[Nn]* ) authorizeHTTP=false; break;;
+		* ) echo "Please answer (y)es or (n)o";;
+esac
+done
 
 #Choose WebServer
 PS3='What WebServer do you want to install ? : '
@@ -26,10 +32,10 @@ select webSrv in "${options[@]}"
 do
 	case $webSrv in
 		"Apache")
-			./web_server.sh --install "Apache";
+			./web_server.sh --install "Apache" $authorizeHTTP;
 			break;;
 		"Nginx")
-			./web_server.sh --install "Nginx";
+			./web_server.sh --install "Nginx" $authorizeHTTP;
 			break;;
 		"None")
 			break;;
@@ -37,7 +43,7 @@ do
 			echo "invalid option";;
 	esac
 done
-
+	
 echo
 
 #How much site instances do you want to create ?
@@ -91,17 +97,6 @@ do
 		done
 		
 		echo
-		# Authorize HTTP connection (Unsecure) ?
-		while true; do
-			read -p "Authorize HTTP connection (y or n) ?" yn
-			case $yn in
-				[Yy]* ) authorizeHTTP=true; break;;
-				[Nn]* ) authorizeHTTP=false; break;;
-				* ) echo "Please answer (y)es or (n)o";;
-			esac
-		done
-		
-		echo
 		# GitHub link ?
 		while true; do
 			read -p "Connect to GitHub Repository (y or n) ?" yn
@@ -129,7 +124,6 @@ do
 		echo "Connect GitHub : $connectGitHub"
 		echo "Port Number : $portNr"
 		echo "Configure SSL : $configureSSL"
-		echo "Authorize HTTP : $authorizeHTTP"
 		
 		echo
 		# Validate choices ?
@@ -149,13 +143,6 @@ do
 	echo
 	
 	./web_server.sh --add $webSrv $domain $portNr "ssl=$configureSSL" "github=$connectGitHub" $siteEnv
-		
-	#Installing NodeJS
-	#if [[ "$siteEnv" == "NodeJS" ]]; 
-	#then 
-	#	./nodeJS.sh
-		#Add proxy to apache/nginx to listen to port
-	#fi
 	
 	#Installing Wordpress
 	#if [[ "$siteEnv" == "Wordpress" ]]; 

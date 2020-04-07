@@ -4,6 +4,29 @@ pause(){
    read -p "$*"
 }
 
+setup_firewall(){
+	local _HTTP_AUTH=$1
+
+	echo "---> Installing Firewall"
+	apt install ufw
+		
+	echo "---> Configuring Firewall"
+	ufw allow OpenSSH
+	
+	if _HTTP_AUTH; 
+	then 
+		ufw delete 'Nginx HTTP';
+		ufw delete 'Nginx HTTPS'; 
+		ufw allow 'Nginx Full';
+	else
+		ufw delete 'Nginx HTTP';
+		ufw delete 'Nginx Full';
+		ufw allow 'Nginx HTTPS'; 
+	fi
+	
+	ufw enable
+}
+
 install_apache(){
 	echo "---> Start installing Apache"
 	echo "---> Not implemented yet ..."
@@ -13,7 +36,6 @@ install_nginx(){
 	NGINX_CONFIG="/etc/nginx/nginx.conf"
 	echo "---> Start installing NGINX"
 	apt install nginx
-	ufw allow 'Nginx Full'
 	
 	if systemctl status nginx | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
@@ -147,6 +169,7 @@ INSTALL=false
 ADD=false
 SSL=false
 GITHUB=false
+HTTP_AUTH=true
 
 FILE_PATH="/var/www/default"
 CURRENT_USER=$(who | awk 'NR==1{print $1}')
@@ -156,13 +179,17 @@ SITES_ENABLED="/etc/nginx/sites-enabled/"
 
 echo
 
+#Update and Upgrade packages
+apt update && apt upgrade
+
 # Loop through arguments and process them
 while [ -n "$1" ]; do # while loop starts
 	case "$1" in
         -i|--install)
 			INSTALL=true
 			WEB_SERVER=$2
-			shift 1
+			HTTP_AUTH=$8
+			shift 2
 			;;
         -a|--add)
 			ADD=true
@@ -184,13 +211,8 @@ if $INSTALL;
 then
 	echo "Installing new web server ..."
 	
-	echo "---> Updating repositories"
-	apt update
-	
 	echo "---> Installing Firewall"
-	apt install ufw
-	ufw allow OpenSSH
-	ufw enable
+	setup_firewall $HTTP_AUTH
 	
 	if [[ "$WEB_SERVER" == "Apache" ]]; then install_apache; fi
 	if [[ "$WEB_SERVER" == "Nginx" ]]; then install_nginx; fi
@@ -207,27 +229,21 @@ then
 	echo "---> ENVIRONNEMENT : $ENV"
 	
 	add_server_block $DOMAIN $PORT
-	pause "Press [Enter] key to continue"
 	
 	if $GITHUB;
 	then
 		clone_github $FILE_PATH
-		pause "Press [Enter] key to continue"
 	fi
 	
 	if [[ "$ENV" == "NodeJS" ]];
 	then 
-		install_NodeJS;
-		pause "Press [Enter] key to continue"
-		
+		install_NodeJS;	
 		launch_NodeJS $FILE_PATH;
-		pause "Press [Enter] key to continue"
 	fi
 	
 	if $SSL;
 	then
 		setup_ssl $DOMAIN
-		pause "Press [Enter] key to continue"
 	fi
 fi
 
