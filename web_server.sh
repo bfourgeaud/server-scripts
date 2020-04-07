@@ -12,8 +12,8 @@ setup_firewall(){
 	ufw reset
 		
 	echo "---> Configuring Firewall"
-	ufw allow OpenSSH
-	ufw allow $service;
+	ufw allow "OpenSSH"
+	ufw allow "$service";
 
 	ufw enable
 }
@@ -201,6 +201,21 @@ install_Wordpress(){
 	echo "---> Copying wordpress sources to target folder"
 	cp -r $_TEMP_PATH/wordpress/. $_FILE_PATH/
 	rm -Rf $_TEMP_PATH/wordpress/
+	
+	echo "---> Setting up wp-config.php"
+	cp $_FILE_PATH/wp-config-sample.php $_FILE_PATH/wp-config.php
+	
+	local search_DBname="database_name_here"
+	local search_Username="username_here"
+	local search_Password="password_here"
+	
+	sed -i "s/${search_DBname}/${_DB_NAME}/g" $_FILE_PATH/wp-config.php
+	sed -i "s/${search_Username}/${_USERNAME}/g" $_FILE_PATH/wp-config.php
+	sed -i "s/${search_Password}/${_PASSWORD}/g" $_FILE_PATH/wp-config.php
+	
+	echo "---> Setting folder security"
+	chown -R $CURRENT_USER:$CURRENT_USER $_FILE_PATH
+	chmod -R 755 $_FILE_PATH
 }
 
 clone_github(){
