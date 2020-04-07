@@ -104,11 +104,10 @@ clone_github(){
 	read -p "Enter GitHub clone link :" _GITHUB_LINK
 	
 	echo "---> Deleting folder content"
-	rm -rf $_FILE_PATH/*
+	rm -rf $_FILE_PATH/{,.[!.],..?}*
 	
 	echo "---> Cloning to $_FILE_PATH"
 	cd $_FILE_PATH
-	ls
 	git clone $_GITHUB_LINK .
 }
 
