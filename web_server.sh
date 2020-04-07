@@ -94,8 +94,14 @@ clone_github(){
 	local _FILE_PATH=$1
 	local _GITHUB_LINK=""
 	
+	echo "---> Setting-up GitHub"
 	read -p "Enter GitHub clone link :" _GITHUB_LINK
-	git clone $_GITHUB_LINK _FILE_PATH
+	
+	echo "---> Deleting folder content"
+	rm -rf $_FILE_PATH/*
+	
+	echo "---> Cloning to $_FILE_PATH"
+	git clone $_GITHUB_LINK $_FILE_PATH
 }
 
 setup_ssl(){
@@ -199,7 +205,7 @@ then
 		clone_github $FILE_PATH
 	fi
 	
-	if [[ "$siteEnv" == "NodeJS" ]];
+	if [[ "$ENV" == "NodeJS" ]];
 	then 
 		install_NodeJS;
 		launch_NodeJS $FILE_PATH;
