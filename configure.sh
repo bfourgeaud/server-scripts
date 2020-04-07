@@ -27,7 +27,7 @@ done
 echo
 #Choose WebServer
 PS3='What WebServer do you want to install ? : '
-options=("Apache" "Nginx" "None")
+options=("Apache" "Nginx")
 select webSrv in "${options[@]}"
 do
 	case $webSrv in

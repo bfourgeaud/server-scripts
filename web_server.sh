@@ -190,7 +190,10 @@ install_Wordpress(){
 	
 	echo "---> Downloading latest Wordpress Version"
 	wget -P $_TEMP_PATH/ https://wordpress.org/latest.tar.gz
-	tar xpf $_TEMP_PATH/latest.tar.gz
+	
+	echo "---> Uncompressing wordpress archive"
+	tar xzf $_TEMP_PATH/latest.tar.gz
+	rm $_TEMP_PATH/latest.tar.gz
 	
 	echo "---> Deleting target folder content"
 	rm -rf $_FILE_PATH/{,.[!.],..?}*
