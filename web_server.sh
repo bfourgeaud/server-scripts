@@ -9,6 +9,7 @@ setup_firewall(){
 
 	echo "---> Installing Firewall"
 	apt install ufw
+	ufw reset
 		
 	echo "---> Configuring Firewall"
 	ufw allow OpenSSH
