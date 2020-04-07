@@ -41,7 +41,7 @@ add_server_block(){
 	chmod -R 755 $FILE_PATH
 	
 	echo "---> Adding server block"
-	cat << "EOF" > $SITES_AVAILABLE$DOMAIN
+	cat <<END > $SITES_AVAILABLE$DOMAIN
 server {
         listen 80;
         listen [::]:80;
@@ -54,7 +54,7 @@ server {
                 try_files $uri $uri/ =404;
         }
 }
-EOF
+END
 	#nano $SITES_AVAILABLE$DOMAIN
 	
 	echo "---> Enabling Server Block"
