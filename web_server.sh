@@ -55,10 +55,13 @@ server {
         }
 }
 EOF
-	nano $SITES_AVAILABLE$DOMAIN
+	#nano $SITES_AVAILABLE$DOMAIN
 	
 	echo "---> Enabling Server Block"
 	ln -sf $SITES_AVAILABLE$DOMAIN $SITES_ENABLED
+	
+	echo "---> Restarting Nginx"
+	systemctl restart nginx
 }
 
 ### MAIN PROGRAMM ###
