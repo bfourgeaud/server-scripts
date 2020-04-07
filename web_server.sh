@@ -2,12 +2,13 @@
 echo
 
 install_apache(){
-	echo "--> Start installing Apache"
+	echo "---> Start installing Apache"
+	echo "---> Not implemented yet ..."
 }
 
 install_nginx(){
 	NGINX_CONFIG="/etc/nginx/nginx.conf"
-	echo "--> Start installing NGINX"
+	echo "---> Start installing NGINX"
 	apt install nginx
 	ufw allow 'Nginx Full'
 	
@@ -28,6 +29,7 @@ install_nginx(){
 
 add_server_block(){
 	DOMAIN=$1
+	PORT=$2
 	CURRENT_USER=$(who | awk 'NR==1{print $1}')
 	FILE_PATH=/var/www/$DOMAIN
 	SITES_AVAILABLE=/etc/nginx/sites-available/
@@ -43,15 +45,16 @@ add_server_block(){
 	echo "---> Adding server block"
 	cat <<END > $SITES_AVAILABLE$DOMAIN
 server {
-        listen 80;
-        listen [::]:80;
-
         root $FILE_PATH;
-
+        index index.html;
         server_name $DOMAIN www.$DOMAIN;
-
         location / {
-                try_files $uri $uri/ =404;
+           proxy_pass http://localhost:$PORT;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
         }
 }
 END
