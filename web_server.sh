@@ -11,7 +11,7 @@ install_nginx(){
 	apt install nginx
 	ufw allow 'Nginx Full'
 	
-	if [[ systemctl status nginx | grep -q 'Active: active (running)' ]]; then
+	if systemctl status nginx | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
 	fi
 	
@@ -20,7 +20,7 @@ install_nginx(){
     local replace="server_names_hash_bucket_size 64;"
 	sed -i "s/${search}/${replace}/g" $NGINX_CONFIG
 	
-	if [[ nginx -t | grep -q 'syntax is ok' ]]; then
+	if nginx -t | grep -q 'syntax is ok'; then
 	   echo "---> Config file OK"
 	   systemctl restart nginx
 	fi
