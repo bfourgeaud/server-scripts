@@ -1,5 +1,4 @@
 #!/bin/bash
-echo
 
 install_apache(){
 	echo "---> Start installing Apache"
@@ -28,10 +27,10 @@ install_nginx(){
 }
 
 add_server_block(){
-	DOMAIN=$1
-	PORT=$2
-	CURRENT_USER=$(who | awk 'NR==1{print $1}')
-	FILE_PATH=/var/www/$DOMAIN
+	local _DOMAIN=$1
+	local _PORT=$2
+	#CURRENT_USER=$(who | awk 'NR==1{print $1}')
+	FILE_PATH=/var/www/$_DOMAIN
 	SITES_AVAILABLE=/etc/nginx/sites-available/
 	SITES_ENABLED=/etc/nginx/sites-enabled/
 	
@@ -43,13 +42,13 @@ add_server_block(){
 	chmod -R 755 $FILE_PATH
 	
 	echo "---> Adding server block"
-	cat <<END > $SITES_AVAILABLE$DOMAIN
+	cat <<END > $SITES_AVAILABLE$_DOMAIN
 server {
         root $FILE_PATH;
         index index.html;
-        server_name $DOMAIN www.$DOMAIN;
+        server_name $_DOMAIN www.$_DOMAIN;
         location / {
-           proxy_pass http://localhost:$PORT;
+           proxy_pass http://localhost:$_PORT;
            proxy_http_version 1.1;
            proxy_set_header Upgrade \$http_upgrade;
            proxy_set_header Connection 'upgrade';
@@ -58,14 +57,47 @@ server {
         }
 }
 END
-	#nano $SITES_AVAILABLE$DOMAIN
 	
 	echo "---> Enabling Server Block"
-	ln -sf $SITES_AVAILABLE$DOMAIN $SITES_ENABLED
+	ln -sf $SITES_AVAILABLE$_DOMAIN $SITES_ENABLED
 	
 	echo "---> Restarting Nginx"
 	systemctl restart nginx
 }
+
+clone_github(){
+	local _FILE_PATH=$1
+	local _GITHUB_LINK=""
+	
+	read -p "Enter GitHub clone link :" _GITHUB_LINK
+	git clone _GITHUB_LINK _FILE_PATH/.
+}
+
+setup_ssl(){
+	local _DOMAIN=$1
+	
+	echo "---> Setting up SSL"
+	
+	echo "---> Add up-to-date mirrors"
+	echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" > "/etc/apt/sources.list"
+	echo "deb-src http://deb.debian.org/debian stretch-backports main contrib non-free" > "/etc/apt/sources.list"
+	
+	echo "---> update mirrors"
+	apt update
+	
+	echo "---> Install Certbot"
+	apt install python-certbot-nginx -t stretch-backports
+	
+	echo "---> Authorize HTTPS traffic in Firewall"
+	ufw allow 'Nginx Full'
+	
+	echo "---> Obtaining Certificate"
+	certbot --nginx -d $_DOMAIN -d www.$_DOMAIN
+	
+	echo "---> Test auto-renawal"
+	certbot renew --dry-run
+}
+
 
 ### MAIN PROGRAMM ###
 
@@ -73,6 +105,14 @@ INSTALL=false
 ADD=false
 SSL=false
 GITHUB=false
+
+FILE_PATH="/var/www/default"
+CURRENT_USER=$(who | awk 'NR==1{print $1}')
+PORT=8080
+SITES_AVAILABLE="/etc/nginx/sites-available/"
+SITES_ENABLED="/etc/nginx/sites-enabled/"
+
+echo
 
 # Loop through arguments and process them
 while [ -n "$1" ]; do # while loop starts
@@ -123,6 +163,16 @@ then
 	echo "---> GITHUB : $GITHUB"
 	
 	add_server_block $DOMAIN $PORT
+	
+	if $GITHUB;
+	then
+		clone_github $FILE_PATH
+	fi
+	
+	if $SSL;
+	then
+		setup_ssl $DOMAIN
+	fi
 fi
 
 echo
