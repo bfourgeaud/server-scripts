@@ -142,7 +142,7 @@ do
 	echo "Installing site $domain ...."
 	echo
 	
-	./web_server.sh --add $webSrv $domain $portNr "ssl=$configureSSL" "github=$connectGitHub" $siteEnv
+	./web_server.sh --add --server $webSrv --domain $domain --port $portNr --secure $configureSSL --github $connectGitHub --env $siteEnv
 	
 	#Installing Wordpress
 	#if [[ "$siteEnv" == "Wordpress" ]]; 

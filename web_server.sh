@@ -159,11 +159,14 @@ setup_ssl(){
 
 ### MAIN PROGRAMM ###
 
+# Default values
 INSTALL=false
 ADD=false
 SSL=false
 GITHUB=false
 HTTP_AUTH=true
+WEB_SERVER="Nginx"
+ENV="NodeJS"
 
 FILE_PATH="/var/www/default"
 CURRENT_USER=$(who | awk 'NR==1{print $1}')
@@ -183,18 +186,36 @@ while [ -n "$1" ]; do # while loop starts
 			INSTALL=true
 			WEB_SERVER=$2
 			HTTP_AUTH=$8
-			shift 2
-			;;
+			#shift 2
+			break;;
         -a|--add)
 			ADD=true
-			WEB_SERVER=$2
-			DOMAIN=$3
-			PORT=$4
-			SSL=${5#*=}
-			GITHUB=${6#*=}
-			ENV=$7
-			shift 6
+			#WEB_SERVER=$2
+			#DOMAIN=$3
+			#PORT=$4
+			##SSL=${5#*=}
+			##GITHUB=${6#*=}
+			#ENV=$7
+			#shift 6
 			;;
+		-s|--server)
+			WEB_SERVER=$2
+			shift;;
+		-d|--domain)
+			DOMAIN=$2
+			shift;;
+		-p|--port)
+			PORT=$2
+			shift;;
+		-ssl|--secure)
+			SSL=$2
+			shift;;
+		-g|--github)
+			GITHUB=$2
+			shift;;
+		-e|--env)
+			ENV=$2
+			shift;;
         *)
 			echo "Option $1 not recognized" ;;
     esac
