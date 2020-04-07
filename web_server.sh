@@ -26,7 +26,7 @@ install_apache(){
 	apt install apache2
 	
 	echo "---> Setting up Firewall"
-	if _HTTP_AUTH; then setup_firewall "WWW Full"; else setup_firewall "WWW Secure"; fi
+	if $_HTTP_AUTH; then setup_firewall "WWW Full"; else setup_firewall "WWW Secure"; fi
 	
 	if systemctl status apache2 | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"

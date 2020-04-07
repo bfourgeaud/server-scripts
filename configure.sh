@@ -68,7 +68,7 @@ do
 		echo
 		# Get Running Environnement
 		PS3='Pre-installed Environnement :'
-		options=("NodeJS" "Wordpress" "None")
+		options=("NodeJS" "Wordpress")
 		select siteEnv in "${options[@]}"
 		do
 			case $siteEnv in
