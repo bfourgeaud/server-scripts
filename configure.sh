@@ -177,7 +177,7 @@ done
 
 ################# UPDATE WEB SERVER FIREWALL #################
 question_header "UPDATING FIREWALL"
-./web_server.sh --update-firewall $UNSECURE_HTTP $WEB_SERVER
+./web_server.sh --update-firewall $WEB_SERVER $UNSECURE_HTTP
 ##############################################################
 
 question_header "CONFIGURE SITES INSTANCES"

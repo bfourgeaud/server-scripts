@@ -5,8 +5,8 @@ pause(){
 }
 
 configure_firewall(){
-  local _WEB_SERVER=$2
-  local _HTTP_AUTH=$3
+  local _WEB_SERVER=$1
+  local _HTTP_AUTH=$2
 
   echo "---> Configuring Firewall entries for $_WEB_SERVER with HTTP_AUTH=$_HTTP_AUTH"
 
@@ -355,8 +355,8 @@ while [ -n "$1" ]; do # while loop starts
       break;;
 
     -uf|--update-firewall) ## TODO : HANDLE
-      HTTP_AUTH=$2
-      WEB_SERVER=$3
+      WEB_SERVER=$2
+      HTTP_AUTH=$3
       configure_firewall $WEB_SERVER $HTTP_AUTH
       break;;
 
