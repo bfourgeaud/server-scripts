@@ -53,7 +53,7 @@ sudo ./configure.sh
 - [ ] Getting sources from GitHub Repository
 - [ ] Installing Database
 
-### Static
+### Static HTML/PHP
 
 - [ ] Getting sources from GitHub Repository
 - [ ] Creating default index.html / index.php file
