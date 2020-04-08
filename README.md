@@ -29,6 +29,10 @@ sudo ./configure.sh
 - [ ] Choose between verbose or non verbose installation
 - [ ] Activate gzip compression
 - [ ] Do not always reconfigure Firewall
+- [ ] Testing performances
+- [ ] Webcrawling : Checking if all pages respond
+- [ ] Testing SEO
+- [ ] Setting up email alerts (Server down, ... )
 
 ### NodeJS
 
@@ -42,6 +46,12 @@ sudo ./configure.sh
 - [x] Setting up MariaDB
 - [ ] Configure basic informations (wp-admin/install.php)
 - [ ] Pre-Install Modules and Templates
+
+### Django
+
+- [ ] Installing django
+- [ ] Getting sources from GitHub Repository
+- [ ] Installing Database
 
 ### Static
 
