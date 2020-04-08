@@ -242,7 +242,7 @@ do
 		resume_choices $i
 
 		# Validate choices ?
-    read -p "Do you confirm that information (y or n) ?" yn
+    read -p "Do you confirm that information (y or n) ? " yn
     case $yn in
       [Yy]* ) break;;
       [Nn]* ) clear; echo "Starting over";;
@@ -253,17 +253,17 @@ do
   pause "All Information has been recorded. Press [Enter] key to launch Install"
 
 	# Make installation
-	question_header "Installing site $domain ... "
+	question_header "Installing site $DOMAIN ... "
 
   case $ENV in
     "NodeJS")
-      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN --github $GITHUB --port $portNr --mongoose $MONGOOSE
+      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN --github $GITHUB --port $portNr --mongoose $MONGOOSE
       break;;
     "Wordpress")
-      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN ## TODO --module $MODULES[i] --template $TEMPLATE []
+      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN ## TODO --module $MODULES[i] --template $TEMPLATE []
       ;;
     "Static")
-      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN
+      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN
       break;;
     *)
       echo "Nothing to install"
