@@ -20,11 +20,11 @@ configure_firewall(){
   ufw reset
   ufw allow "OpenSSH"
 
-  if $_WEB_SERVER == "Apache"; then
+  if "$_WEB_SERVER" == "Apache"; then
     if $_HTTP_AUTH; then ufw allow "WWW Full"; else ufw allow "WWW Secure"; fi
   fi
 
-  if $_WEB_SERVER == "Nginx"; then
+  if "$_WEB_SERVER" == "Nginx"; then
     if $_HTTP_AUTH; then ufw allow "Nginx Full"; else ufw allow "Nginx HTTPS"; fi
   fi
 
