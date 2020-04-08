@@ -120,7 +120,7 @@ if ! [ $(id -u) = 0 ]; then
 fi
 
 ## Check linux version, only Debian 9.x for now
-if (( $(lsb_release --description | grep -q 'Debian GNU/Linux 9.') == 0 )); then
+if !(lsb_release --description | grep -q 'Debian GNU/Linux 9.'); then
   echo "The script works only on Debian 9.x." >&2
   exit 1
 fi
