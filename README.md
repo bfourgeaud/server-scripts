@@ -27,7 +27,7 @@ sudo ./configure.sh
 - [x] Setting up Let's Encrypt certificates
 
 - [x] Installing nodejs
-- [x] Installing Worpress
+- [x] Installing Worpress & MariaDB
 - [x] Getting sources from GitHub Repository
 
 - [ ] Installing MongoDB
