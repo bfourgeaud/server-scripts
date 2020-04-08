@@ -33,8 +33,7 @@ configure_firewall(){
 }
 
 install_apache(){
-	local _HTTP_AUTH=$1
-	local _APACHE_CONFIG="/etc/nginx/nginx.conf"
+	local _APACHE_CONFIG="/etc/apache2/apache2.conf"
 
 	echo "---> Start installing Apache"
 	apt -qq install apache2
@@ -45,7 +44,6 @@ install_apache(){
 }
 
 install_nginx(){
-	local _HTTP_AUTH=$1
 	local _NGINX_CONFIG="/etc/nginx/nginx.conf"
 
 	echo "---> Start installing NGINX"
@@ -57,7 +55,7 @@ install_nginx(){
 
 	echo "---> Editing config file"
 	local search="# server_names_hash_bucket_size 64;"
-    local replace="server_names_hash_bucket_size 64;"
+  local replace="server_names_hash_bucket_size 64;"
 	sed -i "s/${search}/${replace}/g" $_NGINX_CONFIG
 
 	if nginx -t | grep -q 'syntax is ok'; then
@@ -69,6 +67,8 @@ install_nginx(){
 add_nginx_server_block(){
 	local _DOMAIN=$1
 	local _PORT=$2
+  local _ENV=$3
+
 	local SITES_AVAILABLE=/etc/nginx/sites-available/
 	local SITES_ENABLED=/etc/nginx/sites-enabled/
 	FILE_PATH=/var/www/$_DOMAIN
@@ -81,21 +81,36 @@ add_nginx_server_block(){
 	chmod -R 755 $FILE_PATH
 
 	echo "---> Adding server block"
-	cat <<END > $SITES_AVAILABLE$_DOMAIN
+  if [[ "$ENV" == "NodeJS" ]];
+	then
+    cat <<END > $SITES_AVAILABLE$_DOMAIN
 server {
-        root $FILE_PATH;
-        index index.html;
-        server_name $_DOMAIN www.$_DOMAIN;
-        location / {
-           proxy_pass http://localhost:$_PORT;
-           proxy_http_version 1.1;
-           proxy_set_header Upgrade \$http_upgrade;
-           proxy_set_header Connection 'upgrade';
-           proxy_set_header Host \$host;
-           proxy_cache_bypass \$http_upgrade;
-        }
+  root $FILE_PATH;
+  index index.html;
+  server_name $_DOMAIN www.$_DOMAIN;
+  location / {
+    proxy_pass http://localhost:$_PORT;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host \$host;
+    proxy_cache_bypass \$http_upgrade;
+  }
 }
 END
+  else
+    cat <<END > $SITES_AVAILABLE$_DOMAIN
+server {
+  root $FILE_PATH;
+  index index.php;
+  server_name $_DOMAIN www.$_DOMAIN;
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+}
+END
+  fi
+
 
 	echo "---> Enabling Server Block"
 	ln -sf $SITES_AVAILABLE$_DOMAIN $SITES_ENABLED
@@ -110,6 +125,8 @@ END
 add_apache_server_block(){
 	local _DOMAIN=$1
 	local _PORT=$2
+  local _ENV=$3
+
 	local SITES_AVAILABLE=/etc/apache2/sites-available/
 	local SITES_ENABLED=/etc/apache2/sites-enabled/
 	FILE_PATH=/var/www/$_DOMAIN
@@ -122,7 +139,35 @@ add_apache_server_block(){
 	chmod -R 755 $FILE_PATH
 
 	echo "---> Adding server block"
-	cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
+
+  if [[ "$ENV" == "NodeJS" ]];
+	then
+    a2enmod proxy
+    a2enmod proxy_http
+
+    cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
+<VirtualHost *:80>
+  ServerName $_DOMAIN
+  ServerAlias www.$_DOMAIN
+  DocumentRoot $FILE_PATH
+  ErrorLog \${APACHE_LOG_DIR}/$_DOMAIN.error.log
+  CustomLog \${APACHE_LOG_DIR}/$_DOMAIN.access.log combined
+
+  ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyVia Full
+  <Proxy *>
+    Require all granted
+  </Proxy>
+
+  <Location />
+    ProxyPass http://localhost:$_PORT
+    ProxyPassReverse http://localhost:$_PORT
+  </Location>
+</VirtualHost>
+END
+  else
+    cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
 <VirtualHost *:80>
     ServerName $_DOMAIN
     ServerAlias www.$_DOMAIN
@@ -131,8 +176,9 @@ add_apache_server_block(){
     CustomLog \${APACHE_LOG_DIR}/$_DOMAIN.access.log combined
 </VirtualHost>
 END
+	fi
 
-	echo "---> Enabling Serber Block"
+	echo "---> Enabling Serer Block"
 	a2ensite $_DOMAIN.conf
 	a2dissite 000-default.conf
 
@@ -334,8 +380,8 @@ ADD=false
 SSL=false
 GITHUB=false
 HTTP_AUTH=true
-WEB_SERVER="Nginx"
-ENV="NodeJS"
+WEB_SERVER=""
+ENV=""
 
 FILE_PATH="/var/www/default"
 CURRENT_USER=$(who | awk 'NR==1{print $1}')
@@ -415,8 +461,8 @@ then
 	echo "---> GITHUB : $GITHUB"
 	echo "---> ENVIRONNEMENT : $ENV"
 
-	if [[ "$WEB_SERVER" == "Apache" ]]; then add_apache_server_block $DOMAIN $PORT; fi
-	if [[ "$WEB_SERVER" == "Nginx" ]]; then add_nginx_server_block $DOMAIN $PORT; fi
+	if [[ "$WEB_SERVER" == "Apache" ]]; then add_apache_server_block $DOMAIN $PORT $ENV; fi
+	if [[ "$WEB_SERVER" == "Nginx" ]]; then add_nginx_server_block $DOMAIN $PORT $ENV; fi
 
 	if $GITHUB;
 	then

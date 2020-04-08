@@ -221,7 +221,7 @@ do
     echo
 		# Q3 : Get Running Environnement
 		PS3='Pre-installed Environnement : '
-		options=("NodeJS" "Wordpress")
+		options=("NodeJS" "Wordpress","Static")
 		select ENV in "${options[@]}"
 		do
 			case $ENV in
@@ -249,8 +249,6 @@ do
       * ) echo "Please answer (y)es or (n)o";;
     esac
 	done
-
-  pause "All Information has been recorded. Press [Enter] key to launch Install"
 
 	# Make installation
 	question_header "Installing site $DOMAIN ... "
