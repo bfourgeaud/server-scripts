@@ -286,8 +286,8 @@ setup_ssl(){
 	echo "---> Setting up SSL"
 
 	echo "---> Add up-to-date mirrors"
-  if [ !(grep -Fxq "$MIRROR1" "$MIRROR_FILE") ]; then echo $MIRROR1 >> $MIRROR_FILE; fi
-  if [ !(grep -Fxq "$MIRROR2" "$MIRROR_FILE") ]; then echo $MIRROR2 >> $MIRROR_FILE; fi
+  if !(grep -Fxq "$MIRROR1" "$MIRROR_FILE"); then echo $MIRROR1 >> $MIRROR_FILE; fi
+  if !(grep -Fxq "$MIRROR2" "$MIRROR_FILE"); then echo $MIRROR2 >> $MIRROR_FILE; fi
 
 	echo "---> update mirrors"
 	apt -qq update
