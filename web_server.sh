@@ -349,7 +349,7 @@ while [ -n "$1" ]; do # while loop starts
 
     -up|--update-mirrors)
       update
-      break;
+      break;;
 
     -uf|--update-firewall) ## TODO : HANDLE
       HTTP_AUTH=$2
