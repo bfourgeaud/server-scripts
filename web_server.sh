@@ -13,7 +13,8 @@ configure_firewall(){
   # Check if firewall active
   if !(ufw status | grep -q 'Status: active'); then
     echo "---> Installing Firewall"
-    apt install ufw
+    apt -qq install ufw
+    ufw enable
   fi
 
   echo "---> Resetting Firewall"
