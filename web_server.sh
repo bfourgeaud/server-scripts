@@ -8,8 +8,10 @@ configure_firewall(){
   local _WEB_SERVER=$2
   local _HTTP_AUTH=$3
 
+  echo "---> Configuring Firewall entries for $_WEB_SERVER with HTTP_AUTH=$_HTTP_AUTH"
+
   # Check if firewall active
-  if (( $(ufw status | grep -q 'Status: active') == 0 )); then
+  if !(ufw status | grep -q 'Status: active'); then
     echo "---> Installing Firewall"
     apt install ufw
   fi
@@ -23,9 +25,10 @@ configure_firewall(){
   fi
 
   if $_WEB_SERVER == "Nginx"; then
-    if _HTTP_AUTH; then ufw allow "Nginx Full"; else ufw allow "Nginx HTTPS"; fi
+    if $_HTTP_AUTH; then ufw allow "Nginx Full"; else ufw allow "Nginx HTTPS"; fi
   fi
 
+  ufw status
 }
 
 install_apache(){
@@ -33,7 +36,7 @@ install_apache(){
 	local _APACHE_CONFIG="/etc/nginx/nginx.conf"
 
 	echo "---> Start installing Apache"
-	apt install apache2
+	apt -qq install apache2
 
 	if systemctl status apache2 | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
@@ -45,7 +48,7 @@ install_nginx(){
 	local _NGINX_CONFIG="/etc/nginx/nginx.conf"
 
 	echo "---> Start installing NGINX"
-	apt install nginx
+	apt -qq install nginx
 
 	if systemctl status nginx | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
@@ -143,9 +146,9 @@ install_NodeJS(){
 
 	echo "---> Installing NodeJS"
 
-	apt-get install curl software-properties-common
+	apt -qq install curl software-properties-common
 	curl -sL https://deb.nodesource.com/setup_$_Node_Version | sudo bash -
-	apt-get install nodejs
+	apt -qq install nodejs
 
 	echo "---> Installed Node Version :" | node -v
 	echo "---> Installed NPM version :" | npm -v
@@ -171,7 +174,7 @@ install_Wordpress(){
 	local _TEMP_PATH="/tmp"
 
 	echo "---> Installing MariaDB"
-	apt install mariadb-client mariadb-server
+	apt -qq install mariadb-client mariadb-server
 
 	local _DB_NAME="default"
 	local _USERNAME="wordpress"
@@ -187,11 +190,11 @@ install_Wordpress(){
 	mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS $_DB_NAME; CREATE USER IF NOT EXISTS '$_USERNAME'@'localhost' IDENTIFIED BY '$_PASSWORD'; GRANT ALL PRIVILEGES ON $_DB_NAME.* TO '$_USERNAME'@'localhost'; FLUSH PRIVILEGES;"
 
 	echo "---> Installing PHP"
-	apt install php7.0 php7.0-mysql
-	apt install libapache2-mod-php7.0
+	apt -qq install php7.0 php7.0-mysql
+	apt -qq install libapache2-mod-php7.0
 
 	echo "---> Installing PHP MY ADMIN"
-	apt install phpmyadmin
+	apt -qq install phpmyadmin
 
 	echo "---> Downloading latest Wordpress Version"
 	wget -P $_TEMP_PATH/ https://wordpress.org/latest.tar.gz
@@ -283,12 +286,12 @@ setup_ssl(){
 	echo "deb-src http://deb.debian.org/debian stretch-backports main contrib non-free" >> "/etc/apt/sources.list"
 
 	echo "---> update mirrors"
-	apt update
+	apt -qq update
 
 	if [[ "$_WEB_SERVER" == "Apache" ]];
 	then
 		echo "---> Install Certbot"
-		apt install python-certbot-apache -t stretch-backports
+		apt -qq install python-certbot-apache -t stretch-backports
 
 		echo "---> Obtaining Certificate"
 		certbot --apache -d $_DOMAIN -d www.$_DOMAIN
@@ -300,7 +303,7 @@ setup_ssl(){
 	if [[ "$_WEB_SERVER" == "Nginx" ]];
 	then
 		echo "---> Install Certbot"
-		apt install python-certbot-nginx -t stretch-backports
+		apt -qq install python-certbot-nginx -t stretch-backports
 
 		echo "---> Obtaining Certificate"
 		certbot --nginx -d $_DOMAIN -d www.$_DOMAIN
@@ -316,7 +319,7 @@ setup_ssl(){
 update(){
   #Update and Upgrade packages
   echo "---> Updating and Upgrading Packages"
-  apt update && apt upgrade
+  apt -qq update && apt -qq upgrade
 }
 
 ### MAIN PROGRAMM ###

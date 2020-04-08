@@ -125,6 +125,12 @@ if !(lsb_release --description | grep -q 'Debian GNU/Linux 9.'); then
   exit 1
 fi
 
+################# UPDATE MIRRORS #################
+question_header "UPDATING MIRRORS"
+./web_server.sh --update-mirrors
+clear
+##################################################
+
 ## Check if Apache or Nginx Installed
 check_webserver
 echo "---> Actual WebServer detected : $WEB_SERVER"
@@ -168,11 +174,6 @@ while true; do
 		* ) ;;
 esac
 done
-
-################# UPDATE MIRRORS #################
-question_header "UPDATING MIRRORS"
-./web_server.sh --update-mirrors
-##################################################
 
 ################# UPDATE WEB SERVER FIREWALL #################
 question_header "UPDATING FIREWALL"
