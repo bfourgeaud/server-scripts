@@ -197,7 +197,7 @@ do
     SSL=false
     ENV=
     GITHUB=false
-    PORT=8080
+    =8080
     MONGOOSE=false
     MODULES=[]
     TEMPLATES=[]
@@ -255,7 +255,7 @@ do
 
   case $ENV in
     "NodeJS")
-      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN --github $GITHUB --port $portNr --mongoose $MONGOOSE
+      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN --github $GITHUB --port $PORT --mongoose $MONGOOSE
       break;;
     "Wordpress")
       ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN ## TODO --module $MODULES[i] --template $TEMPLATE []
