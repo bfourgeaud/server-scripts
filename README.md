@@ -26,17 +26,24 @@ sudo ./configure.sh
 - [x] Setting Up VirtualHosts for Apache and NGINX
 - [x] Configuring Multiple site instances
 - [x] Setting up Let's Encrypt certificates
+- [ ] Choose between verbose or non verbose installation
+- [ ] Activate gzip compression
+- [ ] Do not always reconfigure Firewall
+
+### NodeJS
 
 - [x] Installing nodejs
-- [x] Installing Worpress & MariaDB
 - [x] Getting sources from GitHub Repository
-
 - [ ] Installing MongoDB
-- [ ] Choose between verbose or non verbose installation
 
-## TODO
-- [ ] Do not always reconfigure Firewall
-- [ ] Getting files from GitHub also for static files (not just NodeJS)
-- [ ] Wordpress : Configure basic informations (wp-admin/install.php)
-- [ ] Wordpress : Pre-Install Modules and Templates
-- [ ] Activate gzip compression
+### Wordpress
+
+- [x] Installing Worpress
+- [x] Setting up MariaDB
+- [ ] Configure basic informations (wp-admin/install.php)
+- [ ] Pre-Install Modules and Templates
+
+### Static
+
+- [ ] Getting sources from GitHub Repository
+- [ ] Creating default index.html / index.php file
