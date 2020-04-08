@@ -221,7 +221,7 @@ do
     echo
 		# Q3 : Get Running Environnement
 		PS3='Pre-installed Environnement : '
-		options=("NodeJS" "Wordpress","Static")
+		options=("NodeJS" "Wordpress" "Static")
 		select ENV in "${options[@]}"
 		do
 			case $ENV in
