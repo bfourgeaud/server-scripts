@@ -1,152 +1,268 @@
 #!/bin/bash
 
-
 pause(){
    read -p "$*"
 }
 
-## Check if script can launch
-##First check current Linux Version
-#lsb_release --description
+# Clear screeen
+clear(){
+  echo -en "\ec"
+}
 
+question_header(){
+  local QUESTION=$1
+  echo
+  echo "#######################################################################"
+  echo "##### $QUESTION"
+  echo "#######################################################################"
+  echo
+}
+
+check_webserver(){
+
+  # Check for Apache
+  if [[ `ps -acx|grep apache|wc -l` > 0 ]]; then
+    echo "VM Configured with Apache"
+    WEB_SERVER="Apache"
+    return;
+  fi
+
+  # Check for Nginx
+  if [[ `ps -acx|grep nginx|wc -l` > 0 ]]; then
+      echo "VM Configured with Nginx"
+      WEB_SERVER="Nginx"
+      return;
+  fi
+
+  WEB_SERVER="None"
+}
+
+node_config(){
+  # Q1 : Link to GitHub Repo
+  while true; do
+    read -p "Connect to GitHub Repository (y or n) ? " yn
+    case $yn in
+      [Yy]* ) GITHUB=true; break;;
+      [Nn]* ) GITHUB=false; break;;
+      * ) echo "Please answer (y)es or (n)o";;
+    esac
+  done
+
+  # Q2 : Install Mongoose DataBase
+  while true; do
+    read -p "Add Mongoose DataBase (y or n) ? " yn
+    case $yn in
+      [Yy]* ) MONGOOSE=true; break;;
+      [Nn]* ) MONGOOSE=false; break;;
+      * ) echo "Please answer (y)es or (n)o";;
+    esac
+  done
+
+  # Q3 : Choose Port for instance
+  while true; do
+    read -e -p "Port Number (4000-9999) - [8080] : " -i 8080 PORT
+    if [[ $PORT -gt 4000 && $PORT -lt 9999 ]]; then break; fi
+  done
+}
+
+wp_config(){
+  echo "Config Wordpress"
+}
+
+static_config(){
+  echo "Config Static"
+}
+
+resume_choices(){
+  local _SITE_NR=$1
+
+  # Resume choices
+  question_header "Resume choices for WebSite n°$_SITE_NR"
+
+  echo -e "Domain-name : ${RED}$DOMAIN${NC}"
+  echo -e "Configure SSL : ${RED}$SSL${NC}"
+  echo -e "Running Environnement : ${RED}$ENV${NC}"
+
+  if [[ "$ENV" == "NodeJS" ]]; then
+    echo -e "Connect to GitHub : ${RED}$GITHUB${NC}"
+    echo -e "Port Number : ${RED}$PORT${NC}"
+    echo -e "Install Mongoose : ${RED}$MONGOOSE${NC}"
+  fi
+
+  if [[ "$ENV" == "Wordpress" ]]; then
+    echo -e "Modules to install : ${RED}$MODULES${NC}"
+    echo -e "Teplates to use : ${RED}$TEMPLATES${NC}"
+  fi
+
+  if [[ "$ENV" == "Static" ]]; then
+    echo ""
+  fi
+  echo
+}
+
+#### STATIC VALUES #####
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+#### DEFAULT VALUES ####
+INSTALL_WS=true
+WEB_SERVER="None"
+UNSECURE_HTTP=false
+NB_SITES=0
+
+clear
+
+## Check if script can launch
+## Check if lauched with sudo privileges, else quit
 if ! [ $(id -u) = 0 ]; then
    echo "The script need to be run as root." >&2
    exit 1
 fi
 
+## Check linux version, only Debian 9.x for now
+lsb_release --description
+if (( $(nginx -t | grep -q 'Debian GNU/Linux 9.') == 0 )); then
+  echo "The script works only on Debian 9.x." >&2
+  exit 1
+fi
+
+## Check if Apache or Nginx Installed
+check_webserver
+echo "---> Actual WebServer detected : $WEB_SERVER"
+
+echo
+## Select WebServer to install
+if [[ $WEB_SERVER == "None" ]];
+then
+  INSTALL_WS=true
+  #Choose WebServer
+  PS3='What WebServer do you want to install ? : '
+  options=("Apache" "Nginx")
+  select webSrv in "${options[@]}"
+  do
+  	case $webSrv in
+  		"Apache")
+        #./web_server.sh --install "Apache" $authorizeHTTP;
+        WEB_SERVER="Apache"
+  			break;;
+  		"Nginx")
+  			#./web_server.sh --install "Nginx" $authorizeHTTP;
+        WEB_SERVER="Nginx"
+  			break;;
+  		*)
+  			;;
+  	esac
+  done
+
+  ################# INSTALL WEB SERVER #########################
+  question_header "INSTALLING WEBSERVER"
+  ./web_server.sh --install $WEB_SERVER
+  ##############################################################
+fi
+
 # Authorize HTTP connection (Unsecure) ?
 while true; do
-	read -p "Authorize HTTP connection (y or n) ?" yn
+	read -p "Authorize unsecure HTTP access (y or n) ? " yn
 	case $yn in
-		[Yy]* ) authorizeHTTP=true; break;;
-		[Nn]* ) authorizeHTTP=false; break;;
-		* ) echo "Please answer (y)es or (n)o";;
+		[Yy]* ) UNSECURE_HTTP=true; break;;
+		[Nn]* ) UNSECURE_HTTP=false; break;;
+		* ) ;;
 esac
 done
 
-echo
-#Choose WebServer
-PS3='What WebServer do you want to install ? : '
-options=("Apache" "Nginx")
-select webSrv in "${options[@]}"
-do
-	case $webSrv in
-		"Apache")
-			./web_server.sh --install "Apache" $authorizeHTTP;
-			break;;
-		"Nginx")
-			./web_server.sh --install "Nginx" $authorizeHTTP;
-			break;;
-		*)
-			echo "invalid option";;
-	esac
-done
-	
-echo
+################# UPDATE WEB SERVER FIREWALL #################
+question_header "UPDATING FIREWALL"
+./web_server.sh --update-firewall $UNSECURE_HTTP $WEB_SERVER
+##############################################################
 
+question_header "CONFIGURE SITES INSTANCES"
 #How much site instances do you want to create ?
-valid=false
-until $valid; do
-	echo "How much site instances (1-10)"
-	read nbSites
-	if [[ "$nbSites" =~ ^[0-9]+$ ]]; then valid=true; else valid=false; fi
+while true; do
+	read -p "How much site instances (1-10) " NB_SITES
+	if [[ "$NB_SITES" =~ ^[0-9]+$ ]]; then break; fi
 done
-
 
 ## Loops though instances and configure them
-for (( i=1; i<=$nbSites; i++ ))
+for (( i=1; i<=$NB_SITES; i++ ))
 do
-	confirm=false;
-	until $confirm; do
-		echo -en "\ec"
-		echo "Configuring site n°$i"
-		echo
-		# Get the domain name
-		echo "Domain-name :"
-		read domain
+	while true; do
 
-		echo
-		# Get Running Environnement
-		PS3='Pre-installed Environnement :'
+    #### DEFAULT VALUES ####
+    DOMAIN=
+    SSL=false
+    ENV=
+    GITHUB=false
+    PORT=8080
+    MONGOOSE=false
+    MODULES=[]
+    TEMPLATES=[]
+
+		#clear
+		question_header "Configuring site n°$i"
+
+		# Q1 : Get the domain name
+		read -p "Domain-name : " DOMAIN
+
+    # Q2 : Install SSL
+    while true; do
+      read -p "Configure SSL (y or N) ? " yn
+      case $yn in
+        [Yy]* ) SSL=true; break;;
+        [Nn]* ) SSL=false; break;;
+        * ) ;;
+      esac
+    done
+
+    echo
+		# Q3 : Get Running Environnement
+		PS3='Pre-installed Environnement : '
 		options=("NodeJS" "Wordpress")
-		select siteEnv in "${options[@]}"
+		select ENV in "${options[@]}"
 		do
-			case $siteEnv in
+			case $ENV in
 				"NodeJS")
+          node_config
 					break;;
 				"Wordpress")
+          wp_config
 					break;;
+        "Static")
+          static_config
+          break;;
 				*)
-					echo "invalid option";;
-			esac
-		done
-		
-		echo
-		# Install SSL
-		while true; do
-			read -p "Configure SSL (y or N) ?" yn
-			case $yn in
-				[Yy]* ) configureSSL=true; break;;
-				[Nn]* ) configureSSL=false; break;;
-				* ) echo "Please answer (y)es or (n)o";;
-			esac
-		done
-		
-		echo
-		# GitHub link ?
-		while true; do
-			read -p "Connect to GitHub Repository (y or n) ?" yn
-			case $yn in
-				[Yy]* ) connectGitHub=true; break;;
-				[Nn]* ) connectGitHub=false; break;;
-				* ) echo "Please answer (y)es or (n)o";;
+					;;
 			esac
 		done
 
-		echo
-		#Port Number
-		valid=false
-		until $valid; do
-			echo "Port Number (4000-9999) - Default 8080"
-			read portNr
-			if ((portNr >= 4000 && portNr <= 9999)); then valid=true; else valid=false; fi
-		done
+		resume_choices $i
 
-		# Resume choices
-		echo
-		echo "SITE $i : You choose the following configuration";
-		echo "Domain-name : $domain"
-		echo "Running Environnement : $siteEnv"
-		echo "Connect GitHub : $connectGitHub"
-		echo "Port Number : $portNr"
-		echo "Configure SSL : $configureSSL"
-		
-		echo
 		# Validate choices ?
-		while true; do
-			read -p "Do you confirm that information (y or n) ?" yn
-			case $yn in
-				[Yy]* ) confirm=true; break;;
-				[Nn]* ) confirm=false; break;;
-				* ) echo "Please answer (y)es or (n)o";;
-			esac
-		done
+    read -p "Do you confirm that information (y or n) ?" yn
+    case $yn in
+      [Yy]* ) break;;
+      [Nn]* ) clear; echo "Starting over";;
+      * ) echo "Please answer (y)es or (n)o";;
+    esac
 	done
-	
+
+  pause "All Information has been recorded. Press [Enter] key to launch Install"
+
 	# Make installation
-	echo
-	echo "Installing site $domain ...."
-	echo
-	
-	./web_server.sh --add --server $webSrv --domain $domain --port $portNr --secure $configureSSL --github $connectGitHub --env $siteEnv
-	
-	#Installing Wordpress
-	#if [[ "$siteEnv" == "Wordpress" ]]; 
-	#then 
-	#	./wordpress.sh
-	#fi
-	
-	#Wait for user confirmation
-	echo
-	pause "Press [Enter] key to continue"
+	question_header "Installing site $domain ... "
+
+  case $ENV in
+    "NodeJS")
+      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN --github $GITHUB --port $portNr --mongoose $MONGOOSE
+      break;;
+    "Wordpress")
+      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN ## TODO --module $MODULES[i] --template $TEMPLATE []
+      ;;
+    "Static")
+      ./web_server.sh --add-site $ENV --secure $SSL --domain $DOMAIN
+      break;;
+    *)
+      echo "Nothing to install"
+      ;;
+  esac
+
 done
