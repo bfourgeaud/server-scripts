@@ -12,7 +12,7 @@ git clone
 sudo chmod +x ./configure.sh
 sudo chmod +x ./web_server.sh
 ```
-## Launching
+## Running Script
 
 ```shell
 sudo ./configure.sh
@@ -31,8 +31,11 @@ sudo ./configure.sh
 - [x] Getting sources from GitHub Repository
 
 - [ ] Installing MongoDB
-- [ ] Choose nbetween verbose or non verbose installation
+- [ ] Choose between verbose or non verbose installation
 
 ## TODO
 - [ ] Do not always reconfigure Firewall
 - [ ] Getting files from GitHub also for static files (not just NodeJS)
+- [ ] Wordpress : Configure basic informations (wp-admin/install.php)
+- [ ] Wordpress : Pre-Install Modules and Templates
+- [ ] Activate gzip compression
