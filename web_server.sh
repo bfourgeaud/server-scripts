@@ -313,6 +313,11 @@ setup_ssl(){
 	certbot renew --dry-run
 }
 
+update(){
+  #Update and Upgrade packages
+  echo "---> Updating and Upgrading Packages"
+  apt update && apt upgrade
+}
 
 ### MAIN PROGRAMM ###
 
@@ -329,11 +334,6 @@ FILE_PATH="/var/www/default"
 CURRENT_USER=$(who | awk 'NR==1{print $1}')
 PORT=8080
 
-echo
-
-#Update and Upgrade packages
-apt update && apt upgrade
-
 # Loop through arguments and process them
 while [ -n "$1" ]; do # while loop starts
 	case "$1" in
@@ -346,6 +346,10 @@ while [ -n "$1" ]; do # while loop starts
     	if [[ "$WEB_SERVER" == "Nginx" ]]; then install_nginx; fi
 
 			break;;
+
+    -up|--update-mirrors)
+      update
+      break;
 
     -uf|--update-firewall) ## TODO : HANDLE
       HTTP_AUTH=$2

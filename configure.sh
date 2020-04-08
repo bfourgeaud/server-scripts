@@ -169,6 +169,11 @@ while true; do
 esac
 done
 
+################# UPDATE MIRRORS #################
+question_header "UPDATING MIRRORS"
+./web_server.sh --update-mirrors
+##################################################
+
 ################# UPDATE WEB SERVER FIREWALL #################
 question_header "UPDATING FIREWALL"
 ./web_server.sh --update-firewall $UNSECURE_HTTP $WEB_SERVER
