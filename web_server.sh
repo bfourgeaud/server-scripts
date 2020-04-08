@@ -280,11 +280,14 @@ setup_ssl(){
 	local _WEB_SERVER=$1
 	local _DOMAIN=$2
 
+  local MIRROR1="deb http://deb.debian.org/debian stretch-backports main contrib non-free"
+  local MIRROR2="deb-src http://deb.debian.org/debian stretch-backports main contrib non-free"
+  local MIRROR_FILE="/etc/apt/sources.list"
 	echo "---> Setting up SSL"
 
 	echo "---> Add up-to-date mirrors"
-	echo "deb http://deb.debian.org/debian stretch-backports main contrib non-free" >> "/etc/apt/sources.list"
-	echo "deb-src http://deb.debian.org/debian stretch-backports main contrib non-free" >> "/etc/apt/sources.list"
+  if [ !(grep -Fxq "$MIRROR1" "$MIRROR_FILE") ]; then echo $MIRROR1 >> $MIRROR_FILE; fi
+  if [ !(grep -Fxq "$MIRROR2" "$MIRROR_FILE") ]; then echo $MIRROR2 >> $MIRROR_FILE; fi
 
 	echo "---> update mirrors"
 	apt -qq update
