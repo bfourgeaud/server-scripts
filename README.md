@@ -8,7 +8,8 @@
 
 ```shell
 sudo apt install git
-git clone
+git clone https://github.com/bfourgeaud/server-scripts.git
+cd /server-scripts/
 sudo chmod +x ./configure.sh
 sudo chmod +x ./web_server.sh
 ```
