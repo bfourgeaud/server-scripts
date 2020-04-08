@@ -143,6 +143,7 @@ add_apache_server_block(){
   if [[ "$ENV" == "NodeJS" ]];
 	then
     a2enmod proxy
+    a2enmod proxy_html
     a2enmod proxy_http
 
     cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
@@ -161,8 +162,8 @@ add_apache_server_block(){
   </Proxy>
 
   <Location />
-    ProxyPass http://localhost:$_PORT
-    ProxyPassReverse http://localhost:$_PORT
+    ProxyPass http://localhost:$_PORT/
+    ProxyPassReverse http://localhost:$_PORT/
   </Location>
 </VirtualHost>
 END
