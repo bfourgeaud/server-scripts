@@ -14,7 +14,6 @@ configure_firewall(){
   if !(ufw status | grep -q 'Status: active'); then
     echo "---> Installing Firewall"
     apt -qq install ufw
-    ufw enable
   fi
 
   echo "---> Resetting Firewall"
@@ -29,6 +28,7 @@ configure_firewall(){
     if $_HTTP_AUTH; then ufw allow "Nginx Full"; else ufw allow "Nginx HTTPS"; fi
   fi
 
+  ufw enable
   ufw status
 }
 
