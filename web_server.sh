@@ -102,7 +102,7 @@ END
     cat <<END > $SITES_AVAILABLE$_DOMAIN
 server {
   root $FILE_PATH;
-  index index.php;
+  index index.php index.html;
   server_name $_DOMAIN www.$_DOMAIN;
   location / {
     try_files $uri $uri/ /index.php?$args;
