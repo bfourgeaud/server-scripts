@@ -70,7 +70,16 @@ wp_config(){
 }
 
 static_config(){
-  echo "Config Static"
+
+  # Q1 : Link to GitHub Repo
+  while true; do
+    read -p "Connect to GitHub Repository (y or n) ? " yn
+    case $yn in
+      [Yy]* ) GITHUB=true; break;;
+      [Nn]* ) GITHUB=false; break;;
+      * ) echo "Please answer (y)es or (n)o";;
+    esac
+  done
 }
 
 resume_choices(){
@@ -261,7 +270,7 @@ do
       ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN ## TODO --module $MODULES[i] --template $TEMPLATE []
       ;;
     "Static")
-      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN
+      ./web_server.sh --add-site $ENV --server $WEB_SERVER --secure $SSL --domain $DOMAIN --github $GITHUB
       break;;
     *)
       echo "Nothing to install"

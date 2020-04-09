@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+  ServerName <<DOMAIN>>
+  ServerAlias www.<<DOMAIN>>
+  DocumentRoot <<ROOT>>
+  ErrorLog ${APACHE_LOG_DIR}/<<DOMAIN>>.error.log
+  CustomLog ${APACHE_LOG_DIR}/<<DOMAIN>>.access.log combined
+
+  ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyVia Full
+  <Proxy *>
+    Require all granted
+  </Proxy>
+
+  <Location />
+    ProxyPass http://localhost:<<PORT>>/
+    ProxyPassReverse http://localhost:<<PORT>>/
+  </Location>
+</VirtualHost>

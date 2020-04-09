@@ -1,0 +1,8 @@
+server {
+  root <<ROOT>>;
+  index index.php index.html;
+  server_name <<DOMAIN>> www.<<DOMAIN>>;
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+}

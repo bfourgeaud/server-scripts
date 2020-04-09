@@ -28,7 +28,7 @@ sudo ./configure.sh
 - [x] Setting up Let's Encrypt certificates
 - [ ] Choose between verbose or non verbose installation
 - [ ] Activate gzip compression
-- [ ] Do not always reconfigure Firewall
+- [x] Do not always reconfigure Firewall
 - [ ] Testing performances
 - [ ] Webcrawling : Checking if all pages respond
 - [ ] Testing SEO
@@ -55,5 +55,9 @@ sudo ./configure.sh
 
 ### Static HTML/PHP
 
-- [ ] Getting sources from GitHub Repository
-- [ ] Creating default index.html / index.php file
+- [x] Getting sources from GitHub Repository
+- [x] Creating default index.html / index.php file
+
+##IMPROVEMENTS
+- [ ] Configurator in nodeJS app -> Launch script to create/show/edit/delete instance on the fly
+- [ ] List of preconfigured modules for Wordpress and NodeJS (Menus, Footers, Layouts, ... )

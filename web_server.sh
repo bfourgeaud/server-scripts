@@ -4,31 +4,60 @@ pause(){
    read -p "$*"
 }
 
+install_package(){
+  local _PACKAGE_NAME=$1
+  # Check if firewall Installed
+  if !(dpkg -s $_PACKAGE_NAME | grep -q 'Status: install ok installed'); then
+    echo "---> Installing $_PACKAGE_NAME"
+    apt -qq install $_PACKAGE_NAME
+  fi
+}
+
 configure_firewall(){
   local _WEB_SERVER=$1
   local _HTTP_AUTH=$2
 
   echo "---> Configuring Firewall entries for $_WEB_SERVER with HTTP_AUTH=$_HTTP_AUTH"
 
-  # Check if firewall active
-  if !(ufw status | grep -q 'Status: active'); then
-    echo "---> Installing Firewall"
-    apt -qq install ufw
+  # Check if firewall Installed
+  install_package "ufw"
+
+  #ufw reset
+
+  echo "---> Adding Firewall rules"
+  # Check if OpenSSH authorized
+  if !(ufw status | grep -q 'OpenSSH'); then
+    ufw allow "OpenSSH"
   fi
 
-  echo "---> Resetting Firewall"
-  ufw reset
-  ufw allow "OpenSSH"
-
   if [[ "$_WEB_SERVER" == "Apache" ]]; then
-    if $_HTTP_AUTH; then ufw allow "WWW Full"; else ufw allow "WWW Secure"; fi
+    if $_HTTP_AUTH;
+    then
+      ufw allow "WWW Full";
+      ufw delete allow "WWW Secure";
+    else
+      ufw allow "WWW Secure";
+      ufw delete allow "WWW Full";
+    fi
   fi
 
   if [[ "$_WEB_SERVER" == "Nginx" ]]; then
-    if $_HTTP_AUTH; then ufw allow "Nginx Full"; else ufw allow "Nginx HTTPS"; fi
+    if $_HTTP_AUTH;
+    then
+      ufw allow "Nginx Full";
+      ufw delete allow "Nginx HTTPS";
+    else
+      ufw allow "Nginx HTTPS";
+      ufw delete allow "Nginx Full";
+    fi
   fi
 
-  ufw enable
+  # Check if firewall active
+  if !(ufw status | grep -q 'Status: active'); then
+    echo "---> Activating Firewall"
+    ufw enable
+  fi
+
   ufw status
 }
 
@@ -36,7 +65,8 @@ install_apache(){
 	local _APACHE_CONFIG="/etc/apache2/apache2.conf"
 
 	echo "---> Start installing Apache"
-	apt -qq install apache2
+  install_package "apache2"
+	#apt -qq install apache2
 
 	if systemctl status apache2 | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
@@ -47,7 +77,8 @@ install_nginx(){
 	local _NGINX_CONFIG="/etc/nginx/nginx.conf"
 
 	echo "---> Start installing NGINX"
-	apt -qq install nginx
+  install_package "nginx"
+	#apt -qq install nginx
 
 	if systemctl status nginx | grep -q 'Active: active (running)'; then
 	   echo "---> Server Running"
@@ -71,6 +102,12 @@ add_nginx_server_block(){
 
 	local SITES_AVAILABLE=/etc/nginx/sites-available/
 	local SITES_ENABLED=/etc/nginx/sites-enabled/
+  local SERVER_BLOCK=$SITES_AVAILABLE$_DOMAIN
+
+  local domain_string="<<DOMAIN>>"
+  local port_string="<<PORT>>"
+  local path_string="<<ROOT>>"
+
 	FILE_PATH=/var/www/$_DOMAIN
 
 	echo "---> Creating folder"
@@ -83,37 +120,19 @@ add_nginx_server_block(){
 	echo "---> Adding server block"
   if [[ "$ENV" == "NodeJS" ]];
 	then
-    cat <<END > $SITES_AVAILABLE$_DOMAIN
-server {
-  root $FILE_PATH;
-  index index.html;
-  server_name $_DOMAIN www.$_DOMAIN;
-  location / {
-    proxy_pass http://localhost:$_PORT;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host \$host;
-    proxy_cache_bypass \$http_upgrade;
-  }
-}
-END
+    cp "./config/Server_Blocks/Nginx_Proxy" $SERVER_BLOCK
+    sed -i "s/${domain_string}/${_DOMAIN}/g" $SERVER_BLOCK
+    sed -i "s/${port_string}/${_PORT}/g" $SERVER_BLOCK
+    sed -i "s/${path_string}/${FILE_PATH}/g" $SERVER_BLOCK
   else
-    cat <<END > $SITES_AVAILABLE$_DOMAIN
-server {
-  root $FILE_PATH;
-  index index.php index.html;
-  server_name $_DOMAIN www.$_DOMAIN;
-  location / {
-    try_files $uri $uri/ /index.php?$args;
-  }
-}
-END
+    cp "./config/Server_Blocks/Nginx" $SERVER_BLOCK
+    sed -i "s/${domain_string}/${_DOMAIN}/g" $SERVER_BLOCK
+    sed -i "s/${path_string}/${FILE_PATH}/g" $SERVER_BLOCK
   fi
 
 
 	echo "---> Enabling Server Block"
-	ln -sf $SITES_AVAILABLE$_DOMAIN $SITES_ENABLED
+	ln -sf $SERVER_BLOCK $SITES_ENABLED
 
 	if nginx -t | grep -q 'syntax is ok'; then
 	   echo "---> Config file OK"
@@ -129,6 +148,11 @@ add_apache_server_block(){
 
 	local SITES_AVAILABLE=/etc/apache2/sites-available/
 	local SITES_ENABLED=/etc/apache2/sites-enabled/
+
+  local domain_string="<<DOMAIN>>"
+  local port_string="<<PORT>>"
+  local path_string="<<ROOT>>"
+
 	FILE_PATH=/var/www/$_DOMAIN
 
 	echo "---> Creating folder"
@@ -146,37 +170,14 @@ add_apache_server_block(){
     a2enmod proxy_html
     a2enmod proxy_http
 
-    cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
-<VirtualHost *:80>
-  ServerName $_DOMAIN
-  ServerAlias www.$_DOMAIN
-  DocumentRoot $FILE_PATH
-  ErrorLog \${APACHE_LOG_DIR}/$_DOMAIN.error.log
-  CustomLog \${APACHE_LOG_DIR}/$_DOMAIN.access.log combined
-
-  ProxyRequests Off
-  ProxyPreserveHost On
-  ProxyVia Full
-  <Proxy *>
-    Require all granted
-  </Proxy>
-
-  <Location />
-    ProxyPass http://localhost:$_PORT/
-    ProxyPassReverse http://localhost:$_PORT/
-  </Location>
-</VirtualHost>
-END
+    cp "./config/Server_Blocks/Apache_Proxy" $SERVER_BLOCK
+    sed -i "s/${domain_string}/${_DOMAIN}/g" $SERVER_BLOCK
+    sed -i "s/${port_string}/${_PORT}/g" $SERVER_BLOCK
+    sed -i "s/${path_string}/${FILE_PATH}/g" $SERVER_BLOCK
   else
-    cat <<END > $SITES_AVAILABLE$_DOMAIN.conf
-<VirtualHost *:80>
-    ServerName $_DOMAIN
-    ServerAlias www.$_DOMAIN
-    DocumentRoot $FILE_PATH
-    ErrorLog \${APACHE_LOG_DIR}/$_DOMAIN.error.log
-    CustomLog \${APACHE_LOG_DIR}/$_DOMAIN.access.log combined
-</VirtualHost>
-END
+    cp "./config/Server_Blocks/Apache" $SERVER_BLOCK
+    sed -i "s/${domain_string}/${_DOMAIN}/g" $SERVER_BLOCK
+    sed -i "s/${path_string}/${FILE_PATH}/g" $SERVER_BLOCK
 	fi
 
 	echo "---> Enabling Serer Block"
@@ -194,9 +195,12 @@ install_NodeJS(){
 
 	echo "---> Installing NodeJS"
 
-	apt -qq install curl software-properties-common
+	#apt -qq install curl software-properties-common
+  install_package "curl"
+  install_package "software-properties-common"
 	curl -sL https://deb.nodesource.com/setup_$_Node_Version | sudo bash -
-	apt -qq install nodejs
+	#apt -qq install nodejs
+  install_package "nodejs"
 
 	echo "---> Installed Node Version :" | node -v
 	echo "---> Installed NPM version :" | npm -v
@@ -221,8 +225,10 @@ install_Wordpress(){
 	local _FILE_PATH=$1
 	local _TEMP_PATH="/tmp"
 
-	echo "---> Installing MariaDB"
-	apt -qq install mariadb-client mariadb-server
+	#echo "---> Installing MariaDB"
+  install_package "mariadb-server"
+  install_package "mariadb-client"
+	#apt -qq install mariadb-client mariadb-server
 
 	local _DB_NAME="default"
 	local _USERNAME="wordpress"
@@ -237,12 +243,16 @@ install_Wordpress(){
 	echo "---> Configuring Database"
 	mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS $_DB_NAME; CREATE USER IF NOT EXISTS '$_USERNAME'@'localhost' IDENTIFIED BY '$_PASSWORD'; GRANT ALL PRIVILEGES ON $_DB_NAME.* TO '$_USERNAME'@'localhost'; FLUSH PRIVILEGES;"
 
-	echo "---> Installing PHP"
-	apt -qq install php7.0 php7.0-mysql
-	apt -qq install libapache2-mod-php7.0
+	#echo "---> Installing PHP"
+  install_package "php7.0"
+  install_package "php7.0-mysql"
+  install_package "libapache2-mod-php7.0"
+	#apt -qq install php7.0 php7.0-mysql
+	#apt -qq install libapache2-mod-php7.0
 
-	echo "---> Installing PHP MY ADMIN"
-	apt -qq install phpmyadmin
+	#echo "---> Installing PHP MY ADMIN"
+	#apt -qq install phpmyadmin
+  install_package "phpmyadmin"
 
 	echo "---> Downloading latest Wordpress Version"
 	wget -P $_TEMP_PATH/ https://wordpress.org/latest.tar.gz
@@ -306,6 +316,11 @@ EOF
 	echo "---> Setting folder security"
 	chown -R $CURRENT_USER:$CURRENT_USER $_FILE_PATH
 	chmod -R 755 $_FILE_PATH
+}
+
+install_Static(){
+  local _FILE_PATH=$1
+  cp "./config/index.html" "$_FILE_PATH/index.html"
 }
 
 clone_github(){
@@ -473,12 +488,26 @@ then
 	if [[ "$ENV" == "NodeJS" ]];
 	then
 		install_NodeJS;
-		launch_NodeJS $FILE_PATH;
+    if $GITHUB;
+  	then
+  		clone_github $FILE_PATH
+      launch_NodeJS $FILE_PATH;
+  	fi
 	fi
 
 	if [[ "$ENV" == "Wordpress" ]];
 	then
 		install_Wordpress $FILE_PATH;
+	fi
+
+  if [[ "$ENV" == "Static" ]];
+	then
+    if $GITHUB;
+  	then
+  		clone_github $FILE_PATH
+    else
+      install_static $FILE_PATH;
+  	fi
 	fi
 
 	if $SSL;
