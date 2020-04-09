@@ -58,6 +58,6 @@ sudo ./configure.sh
 - [x] Getting sources from GitHub Repository
 - [x] Creating default index.html / index.php file
 
-##IMPROVEMENTS
+## IMPROVEMENTS
 - [ ] Configurator in nodeJS app -> Launch script to create/show/edit/delete instance on the fly
 - [ ] List of preconfigured modules for Wordpress and NodeJS (Menus, Footers, Layouts, ... )
