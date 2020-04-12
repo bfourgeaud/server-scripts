@@ -4,9 +4,11 @@
 # ./bin/server-block.sh --add $WEB_SERVER --path $ROOT_PATH --domain $DOMAIN --proxy $PORT
 # Without Proxy :
 # ./bin/server-block.sh --add $WEB_SERVER --path $ROOT_PATH --domain $DOMAIN
+
 domain_string="<<DOMAIN>>"
 port_string="<<PORT>>"
 path_string="<<ROOT>>"
+PROXY=false;
 
 while [[ $# -gt 0 ]]
 do

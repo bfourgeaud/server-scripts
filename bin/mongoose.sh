@@ -1,5 +1,6 @@
 #!/bin/bash
 source global.sh
+INSTALL=false
 
 while [[ $# -gt 0 ]]
 do
@@ -23,7 +24,7 @@ do
   shift;
 done
 
-if $INSTALL;
+if [ "$INSTALL" = "true" ];
 then
   echo "Installing Mongoose"
   echo "Not implemented yet"
