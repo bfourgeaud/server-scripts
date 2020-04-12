@@ -138,7 +138,7 @@ do
   # Start Environnement
   case $ENVIRONNEMENT in
     NodeJS)
-      ./bin/nodejs.sh --start $ROOT_PATH;;
+      ./bin/nodejs.sh --start --path $ROOT_PATH;;
     *)
       echo "Nothing to start";;
   esac
