@@ -5,9 +5,9 @@
 # Without Proxy :
 # ./bin/server-block.sh --add $WEB_SERVER --path $ROOT_PATH --domain $DOMAIN
 
-domain_string="<<DOMAIN>>"
-port_string="<<PORT>>"
-path_string="<<ROOT>>"
+domain_string='<<DOMAIN>>'
+port_string='<<PORT>>'
+path_string='<<ROOT>>'
 PROXY=false;
 
 while [[ $# -gt 0 ]]
@@ -51,9 +51,9 @@ case $WEB_SERVER in
     cp $CFG_FILE $SERVER_BLOCK
 
     echo "---> Editing server block"
-    sed -i 's/${domain_string}/${DOMAIN}/g' $SERVER_BLOCK
-    sed -i 's/${path_string}/${ROOT_PATH}/g' $SERVER_BLOCK
-    sed -i 's/${port_string}/${PORT}/g' $SERVER_BLOCK
+    sed -i "s+${domain_string}+${DOMAIN}+g" $SERVER_BLOCK
+    sed -i "s+${path_string}+${ROOT_PATH}+g" $SERVER_BLOCK
+    sed -i "s+${port_string}+${PORT}+g" $SERVER_BLOCK
 
     echo "---> Enabling Server Block"
   	ln -sf $SERVER_BLOCK $SITES_ENABLED
@@ -86,9 +86,9 @@ case $WEB_SERVER in
     cp $CFG_FILE $SERVER_BLOCK
 
     echo "---> Editing server block"
-    sed -i 's/${domain_string}/${DOMAIN}/g' $SERVER_BLOCK
-    sed -i 's/${path_string}/${ROOT_PATH}/g' $SERVER_BLOCK
-    sed -i 's/${port_string}/${PORT}/g' $SERVER_BLOCK
+    sed -i "s+${domain_string}+${DOMAIN}+g" $SERVER_BLOCK
+    sed -i "s+${path_string}+${ROOT_PATH}+g" $SERVER_BLOCK
+    sed -i "s+${port_string}+${PORT}+g" $SERVER_BLOCK
 
     echo "---> Enabling Server Block"
   	a2ensite $_DOMAIN.conf
