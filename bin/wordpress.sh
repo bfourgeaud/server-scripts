@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../global.sh
+source global.sh
 
 while [[ $# -gt 0 ]]
 do
