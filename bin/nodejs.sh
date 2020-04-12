@@ -27,13 +27,17 @@ if $INSTALL;
 then
   echo "---> Installing NodeJS"
 
-  install_package "curl"
-  install_package "software-properties-common"
-	curl -sL https://deb.nodesource.com/setup_$Node_Version | sudo bash -
-  install_package "nodejs"
+  if !(node -v | grep -q 'v12'); then
+    install_package "curl"
+    install_package "software-properties-common"
+  	curl -sL https://deb.nodesource.com/setup_$Node_Version | sudo bash -
+    install_package "nodejs"
 
-	echo "---> Installed Node Version :" | node -v
-	echo "---> Installed NPM version :" | npm -v
+  	echo "---> Installed Node Version :" | node -v
+  	echo "---> Installed NPM version :" | npm -v
+  else
+    echo "NodeJS already installed"
+  fi
 fi
 
 if $START;
