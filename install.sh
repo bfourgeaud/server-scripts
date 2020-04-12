@@ -151,9 +151,9 @@ then
   echo "Restarting $WEB_SERVER ..."
   case $WEB_SERVER in
     Apache)
-      ./bin/apache.sh --restart;;
+      ./bin/apache.sh --reload;;
     Nginx)
-      ./bin/nginx.sh --restart;;
+      ./bin/nginx.sh --reload;;
   esac
 fi
 
