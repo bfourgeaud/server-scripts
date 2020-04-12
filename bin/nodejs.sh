@@ -43,7 +43,7 @@ fi
 if $START;
 then
   echo "NodeJS.sh -> Statting NodeJS on PATH : $FOLDER_PATH"
-  if [ -n $FOLDER_PATH ]; then echo "ERROR : No path given, can't start NodeJS app."; exit 0; fi
+  if [ -z "$FOLDER_PATH" ]; then echo "ERROR : No path given, can't start NodeJS app."; exit 0; fi
 
   echo "---> Navigating to $FOLDER_PATH"
   cd $FOLDER_PATH
