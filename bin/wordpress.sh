@@ -22,7 +22,7 @@ done
 
 if $INSTALL;
 then
-  if [ -n $FOLDER_PATH ]; then echo "Missing folder path argument"; exit 0; fi
+  if [ -z "$FOLDER_PATH" ]; then echo "Missing folder path argument"; exit 0; fi
 
   # Install PHP
   install_package "php7.0"
@@ -54,7 +54,7 @@ then
   # Create the database.
 
   echo "Creating database $DB_NAME..."
-  mysql -u$DB_USER -p$DB_PASS -e"CREATE DATABASE $DB_NAME"
+  mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS $DB_NAME; CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS'; GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost'; FLUSH PRIVILEGES;"
 
   # Download WP Core.
   wp core download --path=$FOLDER_PATH
