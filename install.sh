@@ -64,7 +64,7 @@ echo "#### PROCESSING ####"
 if [ $UPDATE_PKG ];
 then
   echo "Updating Packages ..."
-  apt -qq update && apt -qq upgrade
+  apt -qq update && apt -qq -y upgrade
 fi
 
 # Install WebServer & Firewall
