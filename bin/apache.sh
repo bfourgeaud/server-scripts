@@ -1,6 +1,10 @@
 #!/bin/bash
 source global.sh
 
+RESTART=false
+INSTALL=false
+RELOAD=false
+
 while [[ $# -gt 0 ]]
 do
   key="$1"
