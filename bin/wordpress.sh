@@ -46,7 +46,7 @@ then
   install_package "mariadb-server"
   install_package "mariadb-client"
 
-  DB_NAME= sed -i 's+.+_+g' $DOMAIN
+  DB_NAME= $(sed 's+.+_+g' <<< $DOMAIN)
 
   echo "---> Wordpress Database info (DBNAME: $DB_NAME) :"
 	read -p "Enter a username :" DB_USER
