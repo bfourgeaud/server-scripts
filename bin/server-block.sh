@@ -50,9 +50,9 @@ case $WEB_SERVER in
     echo "---> Creating ServerBlock"
     cp $CFG_FILE $SERVER_BLOCK
 
-    sed "s~$domain_string~$DOMAIN~" $SERVER_BLOCK
-    sed "s~$path_string~$ROOT_PATH~" $SERVER_BLOCK
-    sed "s~$port_string~$PORT~" $SERVER_BLOCK
+    sed -i 's/$domain_string/$DOMAIN/g' $SERVER_BLOCK
+    sed -i 's/$path_string/$ROOT_PATH/g' $SERVER_BLOCK
+    sed -i 's/$port_string/$PORT/g' $SERVER_BLOCK
 
     #sed -i "s/${domain_string}/${DOMAIN}/g" $SERVER_BLOCK
     #sed -i "s/${path_string}/${ROOT_PATH}/g" $SERVER_BLOCK
@@ -88,9 +88,9 @@ case $WEB_SERVER in
     echo "---> Creating ServerBlock"
     cp $CFG_FILE $SERVER_BLOCK
 
-    sed "s~$domain_string~$DOMAIN~" $SERVER_BLOCK
-    sed "s~$path_string~$ROOT_PATH~" $SERVER_BLOCK
-    sed "s~$port_string~$PORT~" $SERVER_BLOCK
+    sed -i 's/$domain_string/$DOMAIN/g' $SERVER_BLOCK
+    sed -i 's/$path_string/$ROOT_PATH/g' $SERVER_BLOCK
+    sed -i 's/$port_string/$PORT/g' $SERVER_BLOCK
 
     #sed -i "s/${domain_string}/${DOMAIN}/g" $SERVER_BLOCK
     #sed -i "s/${path_string}/${ROOT_PATH}/g" $SERVER_BLOCK

@@ -119,7 +119,6 @@ do
   # Updating packages
   if [ $MONGOOSE ];
   then
-    echo "Installing Mongoose"
     ./bin/mongoose.sh --install --db-name $MONGOOSE_DB_NAME --user $MONGOOSE_USER --pass $MONGOOSE_PASSWORD
   fi
 
