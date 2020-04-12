@@ -31,8 +31,8 @@ then
   fi
 
   echo "---> Editing config file"
-  local search="# server_names_hash_bucket_size 64;"
-  local replace="server_names_hash_bucket_size 64;"
+  search="# server_names_hash_bucket_size 64;"
+  replace="server_names_hash_bucket_size 64;"
   sed -i "s/${search}/${replace}/g" $NGINX_CONFIG
 
   if nginx -t | grep -q 'syntax is ok'; then
