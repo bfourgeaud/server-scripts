@@ -27,7 +27,7 @@ then
 
   install_package "curl"
   install_package "software-properties-common"
-	curl -sL https://deb.nodesource.com/setup_$_Node_Version | sudo bash -
+	curl -sL https://deb.nodesource.com/setup_$Node_Version | sudo bash -
   install_package "nodejs"
 
 	echo "---> Installed Node Version :" | node -v
