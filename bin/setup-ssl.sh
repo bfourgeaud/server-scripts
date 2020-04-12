@@ -30,7 +30,7 @@ case $SSL_SERVER in
     apt -qq install python-certbot-apache -t stretch-backports
 
     echo "---> Obtaining Certificate"
-    certbot --apache -d $SSL_DOMAIN -d www.$SSL_DOMAIN
+    certbot -n -q --apache -d $SSL_DOMAIN -d www.$SSL_DOMAIN --agree-tos --redirect -m benjamin.fourgeaud@gmail.com
 
     echo "---> Restarting Apache"
     systemctl restart apache2;;
@@ -39,7 +39,7 @@ case $SSL_SERVER in
     apt -qq install python-certbot-nginx -t stretch-backports
 
     echo "---> Obtaining Certificate"
-    certbot --nginx -d $SSL_DOMAIN -d www.$SSL_DOMAIN
+    certbot -n -q --nginx -d $SSL_DOMAIN -d www.$SSL_DOMAIN --agree-tos --redirect -m benjamin.fourgeaud@gmail.com
 
     echo "---> Restarting Nginx"
     systemctl restart nginx;;
