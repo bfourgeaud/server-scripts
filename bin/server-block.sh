@@ -55,10 +55,6 @@ case $WEB_SERVER in
     sed -i 's/${path_string}/${ROOT_PATH}/g' $SERVER_BLOCK
     sed -i 's/${port_string}/${PORT}/g' $SERVER_BLOCK
 
-    #sed -i "s/${domain_string}/${DOMAIN}/g" $SERVER_BLOCK
-    #sed -i "s/${path_string}/${ROOT_PATH}/g" $SERVER_BLOCK
-    #sed -i "s/${port_string}/${PORT}/g" $SERVER_BLOCK
-
     echo "---> Enabling Server Block"
   	ln -sf $SERVER_BLOCK $SITES_ENABLED
 
@@ -93,10 +89,6 @@ case $WEB_SERVER in
     sed -i 's/${domain_string}/${DOMAIN}/g' $SERVER_BLOCK
     sed -i 's/${path_string}/${ROOT_PATH}/g' $SERVER_BLOCK
     sed -i 's/${port_string}/${PORT}/g' $SERVER_BLOCK
-
-    #sed -i "s/${domain_string}/${DOMAIN}/g" $SERVER_BLOCK
-    #sed -i "s/${path_string}/${ROOT_PATH}/g" $SERVER_BLOCK
-    #sed -i "s/${port_string}/${PORT}/g" $SERVER_BLOCK
 
     echo "---> Enabling Server Block"
   	a2ensite $_DOMAIN.conf
