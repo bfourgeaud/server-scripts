@@ -14,7 +14,7 @@ SSL_DOMAIN=$2
 
 MIRROR1="deb http://deb.debian.org/debian stretch-backports main contrib non-free"
 MIRROR2="deb-src http://deb.debian.org/debian stretch-backports main contrib non-free"
-MIRROR_FILE="/etc/apt/sources.list"
+MIRROR_FILE="/etc/apt/sources.list.d/backports.list"
 echo "---> Setting up SSL"
 
 echo "---> Add up-to-date mirrors"
