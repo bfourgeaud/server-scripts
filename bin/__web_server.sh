@@ -406,7 +406,7 @@ PORT=8080
 # Loop through arguments and process them
 while [ -n "$1" ]; do # while loop starts
 	case "$1" in
-    -i|--install) ## TODO REWRITE
+    -i|--install)
       INSTALL=true
 			WEB_SERVER=$2
 
