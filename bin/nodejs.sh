@@ -1,5 +1,5 @@
 #!/bin/bash
-source ../global.sh
+source global.sh
 
 Node_Version="12.x"
 
