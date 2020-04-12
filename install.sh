@@ -138,6 +138,7 @@ do
   # Start Environnement
   case $ENVIRONNEMENT in
     NodeJS)
+      echo "Starting NodeJS $ROOT_PATH"
       ./bin/nodejs.sh --start --path $ROOT_PATH;;
     *)
       echo "Nothing to start";;
