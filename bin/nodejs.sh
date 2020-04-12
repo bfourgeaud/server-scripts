@@ -52,6 +52,7 @@ then
   npm install
 
   echo "---> Starting NodeJS app"
-  pm2 start app.js
+  pm2 start -f app.js
+  pm2 save
   pm2 startup
 fi
