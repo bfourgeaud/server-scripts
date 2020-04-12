@@ -2,6 +2,8 @@
 source global.sh
 
 Node_Version="12.x"
+INSTALL=false
+START=false
 
 while [[ $# -gt 0 ]]
 do
