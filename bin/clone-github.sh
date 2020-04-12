@@ -31,20 +31,10 @@ then
   read -p "Enter GitHub clone link :" GITHUB_REPO
 fi
 
-if ! [ -n "$GITHUB_USER" ];
-then
-  read -p "Enter GitHub username :" GITHUB_USER
-fi
-
-read -s -p "Enter GitHub password :" GITHUB_PASS
-
 echo "---> Deleting folder content"
 rm -rf $FILE_PATH/{,.[!.],..?}*
 
 echo "---> Cloning to $FILE_PATH"
 cd $FILE_PATH
 
-# TODO : parse github-link string to perform : https://<user>:<pass>@github.com/<user>/<repo>
-CLONE_LINK="${GITHUB_REPO/'<<PASS>>'/$GITHUB_PASS}"
-
-git clone -q $CLONE_LINK .
+git clone -q $GITHUB_REPO .

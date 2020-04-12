@@ -95,7 +95,7 @@ do
   if $GITHUB;
   then
     echo "Cloning $GITHUB_REPO to $ROOT_PATH ..."
-    ./bin/clone-github.sh -r $GITHUB_REPO -p $ROOT_PATH -u $GITHUB_USERNAME
+    ./bin/clone-github.sh -r $GITHUB_REPO -p $ROOT_PATH
   fi
 
   # Install Environnement
