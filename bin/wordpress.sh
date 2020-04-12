@@ -58,10 +58,10 @@ then
   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS $DB_NAME; CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS'; GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost'; FLUSH PRIVILEGES;"
 
   # Download WP Core.
-  -u $CURRENT_USER -i -- wp core download --path=$FOLDER_PATH
+  wp --allow-root core download --path=$FOLDER_PATH
 
   # Generate the wp-config.php file
-  -u $CURRENT_USER -i -- wp core config --path=$FOLDER_PATH--dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --extra-php <<PHP
+  wp --allow-root core config --path=$FOLDER_PATH--dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --extra-php <<PHP
   define('WP_DEBUG', true);
   define('WP_DEBUG_LOG', true);
   define('WP_DEBUG_DISPLAY', true);
@@ -72,6 +72,6 @@ PHP
   ADMIN_PASS="WP_Jeebie_2020"
   ADMIN_EMAIL="benjamin.fourgeaud@gmail.com"
   # Install the WordPress database.
-  -u $CURRENT_USER -i -- wp core install --path=$FOLDER_PATH --url="http://$DOMAIN" --title=$DOMAIN --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASS --admin_email=$ADMIN_EMAIL
+  wp --allow-root core install --path=$FOLDER_PATH --url="http://$DOMAIN" --title=$DOMAIN --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASS --admin_email=$ADMIN_EMAIL
 
 fi
