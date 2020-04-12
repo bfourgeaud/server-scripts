@@ -47,12 +47,13 @@ case $WEB_SERVER in
       CFG_FILE="./config/Server_Blocks/Nginx";
     fi
 
-    echo "---> Creating ServerBlock"
+    echo "---> Copying ServerBlock model"
     cp $CFG_FILE $SERVER_BLOCK
 
-    sed -i 's/$domain_string/$DOMAIN/g' $SERVER_BLOCK
-    sed -i 's/$path_string/$ROOT_PATH/g' $SERVER_BLOCK
-    sed -i 's/$port_string/$PORT/g' $SERVER_BLOCK
+    echo "---> Editing server block"
+    sed -i 's/${domain_string}/${DOMAIN}/g' $SERVER_BLOCK
+    sed -i 's/${path_string}/${ROOT_PATH}/g' $SERVER_BLOCK
+    sed -i 's/${port_string}/${PORT}/g' $SERVER_BLOCK
 
     #sed -i "s/${domain_string}/${DOMAIN}/g" $SERVER_BLOCK
     #sed -i "s/${path_string}/${ROOT_PATH}/g" $SERVER_BLOCK
