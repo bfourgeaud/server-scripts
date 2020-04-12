@@ -14,6 +14,6 @@ install_package(){
   # Check if firewall Installed
   if !(dpkg -s $_PACKAGE_NAME | grep -q 'Status: install ok installed'); then
     echo "---> Installing $_PACKAGE_NAME"
-    apt -qq install $_PACKAGE_NAME
+    apt -qq -y install $_PACKAGE_NAME
   fi
 }
